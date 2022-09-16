@@ -1,0 +1,17 @@
+(straight-use-package 'smart-mode-line)
+(straight-use-package 'twilight-bright-theme)
+
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+
+(set-frame-font "Iosevka Extended 12")
+
+(setq sml/no-confirm-load-theme t)
+(setq sml/theme 'light)
+(sml/setup)
+
+(load-theme 'twilight-bright t)
+(set-face-attribute 'fringe nil :inherit 'default :background nil)
+
+(provide 'setup-ui)
