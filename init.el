@@ -6,36 +6,55 @@
 (require 'setup-backups)
 (require 'setup-buffers)
 
-(use-package counsel
+(use-package consult
   :ensure t
-  :commands (ivy-mode)
   :bind
-  (("C-s"     . swiper)
-   ("C-c C-r" . ivy-resume)
-   ("M-x"     . counsel-M-x)
-   ("C-x b"   . counsel-switch-buffer)
-   ("C-x C-f" . counsel-find-file)
-   ("C-h f"   . counsel-describe-function)
-   ("C-h v"   . counsel-describe-variable)
-   ("C-h o"   . counsel-describe-symbol)
-   ("C-h S"   . counsel-info-lookup-symbol)
+  (("C-x b"   . consult-buffer)
+   ("C-x 4 b" . consult-buffer-other-window)
+   ("C-x 5 b" . consult-buffer-other-frame)
+   ("C-x p b" . consult-project-buffer)
+   ("C-c C-f" . consult-find)
+   ("C-c g"   . consult-ripgrep)
+   ("C-c C-g" . consult-ripgrep)
+   ("C-s"     . consult-line)
+   ("C-S-s"   . consult-line-multi)
    :map minibuffer-local-map
-   ("C-r"     . counsel-minibuffer-history))
-  :config
-  (ivy-mode)
-  (setq ivy-use-virtual-buffers t
-	enable-recursive-minibuffers t))
+   ("M-r"     . consult-history))
+
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+
+  :init
+
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xref-functions       #'consult-xref
+	xref-show-definitions-function #'consult-xref
+
+	consult-narrow-key (kbd "C-+")))
 
 (use-package dashboard
   :ensure t
   :config
   (dashboard-setup-startup-hook))
 
-(use-package deadgrep
+(use-package embark
   :ensure t
   :bind
-  (("C-c g"   . deadgrep)
-   ("C-c C-g" . deadgrep)))
+  (("C-."   . embark-act)
+   ("M-."   . embark-dwim)
+   ("C-h B" . embark-bindings))
+
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command)
+  ;; Hide the mode line of the Embark live/completion buffers
+  (add-to-list 'display-buffer-alist
+	       '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*" nil
+		 (window-parameters (mode-line-format . none)))))
+
+(use-package embark-consult
+  :ensure t
+  :demand t
+  :after (embark consult)
+  :hook  (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package evil
   :after evil-leader
@@ -46,8 +65,9 @@
 	evil-vsplit-window-right t)
   :config
   (evil-mode t)
-  (global-set-key (kbd "C-o") 'previous-buffer)
-  (global-set-key (kbd "C-i") 'next-buffer))
+  (bind-key   "C-o" #'previous-buffer)
+  (bind-key   "C-i" #'next-buffer)
+  (unbind-key "C-." evil-normal-state-map))
 
 (use-package evil-collection
   :after evil
@@ -77,14 +97,13 @@
   (global-evil-leader-mode)
   (evil-leader/set-leader ",")
   (evil-leader/set-key
-   "b" 'counsel-switch-buffer
-   "B" 'ibuffer
-   "f" 'counsel-find-file
-   "k" 'counsel-kill-buffer
-   "g" 'deadgrep
+   "b" 'consult-buffer
+   "f" 'find-file
+   "k" 'kill-buffer
+   "g" 'consult-ripgrep
    "p" 'project-find-file
-   "s" 'swiper
-   "x" 'counsel-M-x))
+   "s" 'consult-line
+   "x" 'execute-extended-command))
 
 (use-package git-gutter-fringe
   :ensure t
@@ -134,6 +153,18 @@
   (("C-x g"   . magit-status)
    ("C-x C-g" . magit-status)))
 
+(use-package marginalia
+  :ensure t
+  :config
+  (marginalia-mode))
+
+(use-package orderless
+  :ensure t
+  :init
+  (setq completion-styles '(orderless basic)
+	completion-category-defaults nil
+	completion-category-overrides '((file (styles partial-completion)))))
+
 (use-package project
   :after counsel
   :config
@@ -141,19 +172,16 @@
 
 (use-package rust-mode :ensure t :mode "\\.rs\\'")
 
-(use-package which-key
+(use-package savehist
   :ensure t
-  :demand t
-  :bind
-  (("C-h m" . which-key-show-major-mode))
-  :config
-  (which-key-mode))
+  :init (savehist-mode))
 
-;; Git Repo for .emacs.d
-;; Vertico, Consult, Embark, Marginalia
-;; -deadgrep + wgrep
-;; -swiper/ivy/counsel
+(use-package vertico
+  :ensure t
+  :init (vertico-mode))
+
+;; wgrep
 ;; Ace Window
 ;; Embark, Karthik's post to choose where a file/buffer is opened to.
-;; LSP Mode
 ;; Fix git-gutter-fringe
+;; LSP Mode +consult-lsp
