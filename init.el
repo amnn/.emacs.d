@@ -180,7 +180,11 @@
   :ensure t
   :init (vertico-mode))
 
-;; wgrep
+(use-package wgrep
+  :ensure t
+  :commands (wgrep-change-to-wgrep-mode))
+
+
 ;; Ace Window
 ;; Embark, Karthik's post to choose where a file/buffer is opened to.
 ;; Fix git-gutter-fringe
