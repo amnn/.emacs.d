@@ -102,6 +102,7 @@
    "k" 'kill-buffer
    "g" 'consult-ripgrep
    "p" 'project-find-file
+   "P" 'project-switch-project
    "s" 'consult-line
    "x" 'execute-extended-command))
 
