@@ -168,10 +168,65 @@
 
 (use-package orderless
   :ensure t
-  :init
+  :config
+  (defvar amnn/orderless-dispatch-alist
+    '((?% . char-fold-to-regex)
+      (?! . orderless-without-literal)
+      (?` . orderless-initialism)
+      (?= . orderless-literal)
+      (?~ . orderless-flex)))
+
+  (defun amnn/orderless--suffix-regexp ()
+    (if (and (boundp 'consult--tofu-char)
+	     (boundp 'consult--tofu-range))
+	(format "[%c-%c]*$" consult--tofu-char
+		(+ consult--tofu-char
+		   consult--tofu-range -1))
+        "$"))
+
+  (orderless-define-completion-style amnn/orderless-with-initialism
+    (orderless-matching-styles
+     '(orderless-initialism orderless-literal orderless-regexp)))
+
+  (defun amnn/orderless-dispatch (word -index -total)
+    (cond
+     ;; Ensure that $ works with Consult commands' disambiguation suffixes
+     ((string-suffix-p "$" word)
+      `(orderless-regexp  . ,(concat (substring word 0 -1)
+				     (amnn/orderless--suffix-regexp))))
+
+     ;; File extensions
+     ((and (or minibuffer-completing-file-name
+	       (derived-mode-p 'eshell-mode))
+	   (string-match-p "\\`\\.." word))
+      `(orderless-regexp . ,(concat "\\." (substring word 1)
+				    (amnn/orderless--suffix-regexp))))
+
+     ;; Ignore single !
+     ((equal "!" word)
+      `(orderless-literal . ""))
+
+     ;; Prefixes
+     ((when-let (x (assq (aref word 0)
+			 amnn/orderless-dispatch-alist))
+	(cons (cdr x) (substring word 1))))
+
+     ;; Suffixes
+     ((when-let (x (assq (aref word (1- (length word)))
+			 amnn/orderless-dispatch-alist))
+	(cons (cdr x)(substring word 0 -1))))))
+
   (setq completion-styles '(orderless basic)
 	completion-category-defaults nil
-	completion-category-overrides '((file (styles partial-completion)))))
+
+	completion-category-overrides
+	'((file     (styles partial-completion))
+	  (command  (styles amnn/orderless-with-initialism))
+	  (variable (styles amnn/orderless-with-initialism))
+	  (symbol   (styles amnn/orderless-with-initialism)))
+
+	orderless-comment-separator #'orderless-escapable-split-on-space
+	orderless-style-dispatchers '(amnn/orderless-dispatch)))
 
 (use-package project
   :after counsel
