@@ -6,6 +6,13 @@
 (require 'setup-backups)
 (require 'setup-buffers)
 
+(use-package ace-window
+  :ensure t
+  :config
+  (bind-key "M-o" #'ace-window)
+  (setq aw-dispatch-always t
+        aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
 (use-package consult
   :ensure t
   :bind
@@ -185,8 +192,6 @@
   :ensure t
   :commands (wgrep-change-to-wgrep-mode))
 
-
-;; Ace Window
 ;; Embark, Karthik's post to choose where a file/buffer is opened to.
 ;; Fix git-gutter-fringe
 ;; LSP Mode +consult-lsp
