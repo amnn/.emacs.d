@@ -2,6 +2,7 @@ auto-save-list/*
 backup/*
 bookmarks
 elpa/*
+history
 projects
 recentf
 server/*
