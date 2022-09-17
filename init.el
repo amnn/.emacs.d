@@ -191,7 +191,3 @@
 (use-package wgrep
   :ensure t
   :commands (wgrep-change-to-wgrep-mode))
-
-;; Embark, Karthik's post to choose where a file/buffer is opened to.
-;; Fix git-gutter-fringe
-;; LSP Mode +consult-lsp
