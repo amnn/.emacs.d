@@ -7,7 +7,7 @@
 (tool-bar-mode -1)
 
 ;; Set Font
-(set-frame-font "Iosevka SS14 12")
+(set-frame-font "Iosevka SS15 14")
 
 ;; Mode Line
 (setq sml/no-confirm-load-theme t)
