@@ -1,6 +1,7 @@
 auto-save-list/*
 backup/*
 bookmarks
+eln-cache/*
 elpa/*
 history
 projects

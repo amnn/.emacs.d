@@ -246,3 +246,8 @@
 (use-package wgrep
   :ensure t
   :commands (wgrep-change-to-wgrep-mode))
+
+(use-package emacs
+  :config
+  (setq warning-suppress-log-types '((comp)))
+  (setq mac-option-modifier 'meta))
