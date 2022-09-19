@@ -38,10 +38,47 @@
 
 	consult-narrow-key (kbd "C-=")))
 
+(use-package consult-eglot
+  :ensure t
+  :after (consult eglot)
+  :bind
+  (:map evil-normal-state-map
+	("gs" . 'consult-eglot-symbols)))
+
+(use-package corfu
+  :ensure t
+  :custom
+  (corfu-auto t)
+  (corfu-cycle t)
+  (corfu-preselect-first nil)
+  :bind
+  (:map corfu-map
+	("M-SPC"   . corfu-insert-separator)
+	("TAB"     . corfu-next)
+	([tab]     . corfu-next)
+	("S-TAB"   . corfu-previous)
+	([backtab] . corfu-previous))
+  :init
+  (global-corfu-mode))
+
 (use-package dashboard
   :ensure t
   :config
   (dashboard-setup-startup-hook))
+
+(use-package eglot
+  :ensure t
+  :after evil
+  :bind
+  (:map evil-normal-state-map
+	("[g" . 'flymake-goto-prev-error)
+	("]g" . 'flymake-goto-next-error)
+	("ga" . 'eglot-code-actions)
+	("gx" . 'eglot-code-action-quickfix)
+	("gi" . 'eglot-find-implementation)
+	("gd" . 'eglot-find-declaration)
+	("gr" . 'xref-find-references)
+	("gy" . 'eglot-find-typeDefinition)))
 
 (use-package embark
   :ensure t
@@ -162,6 +199,10 @@
   (("C-x g"   . magit-status)
    ("C-x C-g" . magit-status)))
 
+(use-package markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode))
+
 (use-package marginalia
   :ensure t
   :config
@@ -234,7 +275,14 @@
   :config
   (add-hook 'project-find-functions #'amnn--try-project-root))
 
-(use-package rust-mode :ensure t :mode "\\.rs\\'")
+(use-package rust-mode
+  :ensure t
+  :mode "\\.rs\\'"
+  :config
+  (defun widen-line-column () (setq-local whitespace-line-column 100))
+  (add-to-list 'eglot-server-programs '((rust-mode) "rust-analyzer"))
+  (add-hook 'rust-mode-hook 'eglot-ensure)
+  (add-hook 'rust-mode-hook #'widen-line-column))
 
 (use-package savehist
   :ensure t
@@ -247,6 +295,11 @@
 (use-package wgrep
   :ensure t
   :commands (wgrep-change-to-wgrep-mode))
+
+(use-package yasnippet
+  :ensure t
+  :config
+  (yas-global-mode +1))
 
 (use-package emacs
   :config
