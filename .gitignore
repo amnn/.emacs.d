@@ -3,6 +3,7 @@ backup/*
 bookmarks
 eln-cache/*
 elpa/*
+eshell/*
 history
 projects
 recentf
