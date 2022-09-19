@@ -36,7 +36,7 @@
   (setq xref-show-xref-functions       #'consult-xref
 	xref-show-definitions-function #'consult-xref
 
-	consult-narrow-key (kbd "C-+")))
+	consult-narrow-key (kbd "C-=")))
 
 (use-package dashboard
   :ensure t
@@ -51,7 +51,8 @@
    ("C-h B" . embark-bindings))
 
   :init
-  (setq prefix-help-command #'embark-prefix-help-command)
+  (setq prefix-help-command #'embark-prefix-help-command
+	enable-recursive-minibuffers t)
   ;; Hide the mode line of the Embark live/completion buffers
   (add-to-list 'display-buffer-alist
 	       '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*" nil
