@@ -33,7 +33,7 @@
   :init
 
   ;; Use Consult to select xref locations with preview
-  (setq xref-show-xref-functions       #'consult-xref
+  (setq xref-show-xrefs-function       #'consult-xref
 	xref-show-definitions-function #'consult-xref
 
 	consult-narrow-key (kbd "C-=")))
