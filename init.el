@@ -150,6 +150,11 @@
    "s" 'consult-line
    "x" 'execute-extended-command))
 
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
+
 (use-package git-gutter-fringe
   :ensure t
   :demand fringe-helper
