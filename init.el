@@ -152,7 +152,8 @@
 
 (use-package git-gutter-fringe
   :ensure t
-  :hook (prog-mode . git-gutter-mode)
+  :demand fringe-helper
+  :hook ((prog-mode . git-gutter-mode))
   :config
   (set-face-foreground  'git-gutter-fr:added "yellow green")
   (define-fringe-bitmap 'git-gutter-fr:added
