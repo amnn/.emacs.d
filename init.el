@@ -110,8 +110,7 @@
 	evil-vsplit-window-right t)
   :config
   (evil-mode t)
-  (bind-key   "C-o" #'previous-buffer)
-  (bind-key   "C-i" #'next-buffer)
+  ;; Unbind to not conflict with Embark
   (unbind-key "C-." evil-normal-state-map))
 
 (use-package evil-collection
