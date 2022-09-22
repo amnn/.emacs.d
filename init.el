@@ -288,10 +288,12 @@
   :ensure t
   :mode "\\.rs\\'"
   :config
-  (defun widen-line-column () (setq-local whitespace-line-column 100))
+  (defun widen-fill ()
+    (setq-local fill-column 100)
+    (setq-local whitespace-line-column 100))
   (add-to-list 'eglot-server-programs '((rust-mode) "rust-analyzer"))
   (add-hook 'rust-mode-hook 'eglot-ensure)
-  (add-hook 'rust-mode-hook #'widen-line-column))
+  (add-hook 'rust-mode-hook #'widen-fill))
 
 (use-package savehist
   :ensure t
