@@ -280,6 +280,10 @@
   :config
   (add-hook 'project-find-functions #'amnn--try-project-root))
 
+(use-package rainbow-delimiters
+  :ensure t
+  :hook (prog-mode . rainbow-delimiters-mode))
+
 (use-package rust-mode
   :ensure t
   :mode "\\.rs\\'"
