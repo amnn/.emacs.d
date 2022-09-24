@@ -13,9 +13,41 @@
   ("M-o" . 'ace-window)
   :custom
   (aw-dispatch-always t)
+  (aw-dispatch-when-more-than 1)
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
 
   :config
+  ;; NB. horz/vert here identifies the axis that is being split, which
+  ;; is the opposite to how vim's split/vsplit works.
+  (defun amnn/aw-split-other-window-vert (window)
+    "Split WINDOW horizontally and fill the original WINDOW."
+    (select-window window)
+    (split-window-vertically)
+    (other-window 1)
+    window)
+
+  (defun amnn/aw-split-other-window-horz (window)
+    "Split WINDOW vertically and fill the original WINDOW."
+    (select-window window)
+    (split-window-horizontally)
+    (other-window 1)
+    window)
+
+  (setq aw-dispatch-alist
+   '((?x aw-delete-window                "Delete Window")
+     (?m aw-swap-window                  "Swap Windows")
+     (?M aw-move-window                  "Move Window")
+     (?c aw-copy-window                  "Copy Window")
+     (?n aw-flip-window                  "Previous Window")
+     (?F aw-split-window-fair            "Split Window Fair")
+     (?v aw-split-window-horz            "Split Window Right")
+     (?V amnn/aw-split-other-window-horz "Split Window Left")
+     (?b aw-split-window-vert            "Split Window Below")
+     (?B amnn/aw-split-other-window-vert "Split Window Above")
+     (?o delete-other-windows            "Delete Other Windows")
+     (?T aw-transpose-frame              "Transpose Frame")
+     (?? aw-show-dispatch-help)))
+
   (ace-window-posframe-mode))
 
 (use-package consult
@@ -100,7 +132,16 @@
   :bind
   (("C-."   . embark-act)
    ("M-."   . embark-dwim)
-   ("C-h B" . embark-bindings))
+   ("C-h B" . embark-bindings)
+
+   :map embark-file-map
+   ("o" . amnn/embark-ace-find-file)
+
+   :map embark-buffer-map
+   ("o" . amnn/embark-ace-switch-to-buffer)
+
+   :map embark-bookmark-map
+   ("o" . amnn/embark-ace-bookmark-jump))
 
   :custom
   (prefix-help-command #'embark-prefix-help-command)
@@ -110,7 +151,21 @@
   ;; Hide the mode line of the Embark live/completion buffers
   (add-to-list 'display-buffer-alist
 	       '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*" nil
-		 (window-parameters (mode-line-format . none)))))
+		 (window-parameters (mode-line-format . none))))
+
+  (eval-when-compile
+    (defmacro amnn/embark-ace-action (fn)
+      `(defun ,(intern (concat "amnn/embark-ace-" (symbol-name fn))) ()
+	 (interactive)
+	 (with-demoted-errors "%s"
+           (require 'ace-window)
+           (let ((aw-dispatch-always t))
+             (aw-switch-to-window (aw-select nil))
+             (call-interactively (symbol-function ',fn)))))))
+
+  (amnn/embark-ace-action find-file)
+  (amnn/embark-ace-action switch-to-buffer)
+  (amnn/embark-ace-action bookmark-jump))
 
 (use-package embark-consult
   :ensure t
