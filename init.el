@@ -66,6 +66,17 @@
   :config
   (dashboard-setup-startup-hook))
 
+
+(use-package dired
+  :straight (:type built-in)
+  :after evil-collection
+  :commands (dired dired-jump)
+  :config
+  (setq dired-dwim-target t)
+  (evil-collection-define-key 'normal 'dired-mode-map "h" 'dired-up-directory)
+  (evil-collection-define-key 'normal 'dired-mode-map "l" 'dired-find-file)
+  (evil-collection-define-key 'normal 'dired-mode-map "L" 'dired-display-file))
+
 (use-package eglot
   :ensure t
   :after evil
