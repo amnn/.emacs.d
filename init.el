@@ -237,10 +237,10 @@
   :demand fringe-helper
   :hook ((prog-mode . git-gutter-mode))
   :config
-  (set-face-foreground  'git-gutter-fr:added "yellow green")
+  (set-face-foreground  'git-gutter-fr:added "lime green")
   (define-fringe-bitmap 'git-gutter-fr:added
     [224] nil nil '(center repeated))
-  (set-face-foreground  'git-gutter-fr:modified "gold")
+  (set-face-foreground  'git-gutter-fr:modified "orange")
   (define-fringe-bitmap 'git-gutter-fr:modified
     [224] nil nil '(center repeated))
   (set-face-foreground  'git-gutter-fr:deleted "firebrick")
