@@ -20,6 +20,12 @@
 		    :inherit 'default
 		    :background nil)
 
+(set-face-attribute 'font-lock-doc-face nil
+		    :extend t)
+
+(set-face-attribute 'font-lock-comment-face nil
+		    :extend t)
+
 ;; Whitespace highlighting
 (require 'whitespace)
 (setq whitespace-line-column 80
