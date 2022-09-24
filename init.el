@@ -8,10 +8,11 @@
 
 (use-package ace-window
   :ensure t
-  :config
-  (bind-key "M-o" #'ace-window)
-  (setq aw-dispatch-always t
-        aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+  :bind
+  ("M-o" . 'ace-window)
+  :custom
+  (aw-dispatch-always t)
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
 (use-package consult
   :ensure t
@@ -28,15 +29,14 @@
    :map minibuffer-local-map
    ("M-r"     . consult-history))
 
+
   :hook (completion-list-mode . consult-preview-at-point-mode)
 
-  :init
-
+  :custom
   ;; Use Consult to select xref locations with preview
-  (setq xref-show-xrefs-function       #'consult-xref
-	xref-show-definitions-function #'consult-xref
-
-	consult-narrow-key (kbd "C-=")))
+  (xref-show-xrefs-function       #'consult-xref)
+  (xref-show-definitions-function #'consult-xref)
+  (consult-narrow-key (kbd "C-=")))
 
 (use-package consult-eglot
   :ensure t
@@ -71,8 +71,9 @@
   :straight (:type built-in)
   :after evil-collection
   :commands (dired dired-jump)
+  :custom
+  (dired-dwim-target t)
   :config
-  (setq dired-dwim-target t)
   (evil-collection-define-key 'normal 'dired-mode-map "h" 'dired-up-directory)
   (evil-collection-define-key 'normal 'dired-mode-map "l" 'dired-find-file)
   (evil-collection-define-key 'normal 'dired-mode-map "L" 'dired-display-file))
@@ -98,9 +99,11 @@
    ("M-."   . embark-dwim)
    ("C-h B" . embark-bindings))
 
+  :custom
+  (prefix-help-command #'embark-prefix-help-command)
+  (enable-recursive-minibuffers t)
+
   :init
-  (setq prefix-help-command #'embark-prefix-help-command
-	enable-recursive-minibuffers t)
   ;; Hide the mode line of the Embark live/completion buffers
   (add-to-list 'display-buffer-alist
 	       '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*" nil
@@ -115,10 +118,10 @@
 (use-package evil
   :after evil-leader
   :ensure t
-  :init
-  (setq evil-search-module 'evil-search
-	evil-split-window-below  t
-	evil-vsplit-window-right t)
+  :custom
+  (evil-search-module 'evil-search)
+  (evil-split-window-below  t)
+  (evil-vsplit-window-right t)
   :config
   (evil-mode t)
   ;; Unbind to not conflict with Embark
@@ -127,8 +130,9 @@
 (use-package evil-collection
   :after evil
   :ensure t
+  :custom
+  (evil-want-integration t)
   :config
-  (setq evil-want-integration t)
   (evil-collection-init))
 
 (use-package evil-easymotion
@@ -140,25 +144,29 @@
 (use-package evil-escape
   :after evil
   :ensure t
+  :custom
+  (evil-escape-key-sequence "jk")
   :config
-  (setq evil-escape-key-sequence "jk")
   (evil-escape-mode))
 
 (use-package evil-leader
   :ensure t
-  :init
-  (setq evil-want-keybinding nil)
+  :custom
+  (evil-want-keybinding nil)
   :config
   (global-evil-leader-mode)
   (evil-leader/set-leader ",")
   (evil-leader/set-key
    "b" 'consult-buffer
+   "d" 'dired
    "f" 'find-file
    "k" 'kill-buffer
    "g" 'consult-ripgrep
    "p" 'project-find-file
    "P" 'project-switch-project
    "s" 'consult-line
+   "v" 'magit-status
+   "w" 'ace-window
    "x" 'execute-extended-command))
 
 (use-package evil-surround
@@ -226,6 +234,18 @@
 
 (use-package orderless
   :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides
+   '((file     (styles partial-completion))
+     (command  (styles amnn/orderless-with-initialism))
+     (variable (styles amnn/orderless-with-initialism))
+     (symbol   (styles amnn/orderless-with-initialism))))
+
+  (orderless-component-separator #'orderless-escapable-split-on-space)
+  (orderless-style-dispatchers '(amnn/orderless-dispatch))
+
   :config
   (defvar amnn/orderless-dispatch-alist
     '((?% . char-fold-to-regex)
@@ -272,19 +292,7 @@
      ;; Suffixes
      ((when-let (x (assq (aref word (1- (length word)))
 			 amnn/orderless-dispatch-alist))
-	(cons (cdr x)(substring word 0 -1))))))
-
-  (setq completion-styles '(orderless basic)
-	completion-category-defaults nil
-
-	completion-category-overrides
-	'((file     (styles partial-completion))
-	  (command  (styles amnn/orderless-with-initialism))
-	  (variable (styles amnn/orderless-with-initialism))
-	  (symbol   (styles amnn/orderless-with-initialism)))
-
-	orderless-comment-separator #'orderless-escapable-split-on-space
-	orderless-style-dispatchers '(amnn/orderless-dispatch)))
+	(cons (cdr x)(substring word 0 -1)))))))
 
 (use-package project
   :after counsel
@@ -324,6 +332,6 @@
   (yas-global-mode +1))
 
 (use-package emacs
-  :config
-  (setq warning-suppress-log-types '((comp)))
-  (setq mac-option-modifier 'meta))
+  :custom
+  (warning-suppress-log-types '((comp)))
+  (mac-option-modifier 'meta))
