@@ -11,10 +11,14 @@
   :after posframe
   :bind
   ("M-o" . 'ace-window)
+
   :custom
   (aw-dispatch-always t)
   (aw-dispatch-when-more-than 1)
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+
+  :custom-face
+  (aw-leading-char-face ((t (:inherit default :foreground "red" :height 600))))
 
   :config
   ;; NB. horz/vert here identifies the axis that is being split, which
