@@ -1,10 +1,20 @@
-(add-to-list 'load-path (expand-file-name "config" user-emacs-directory))
+(setq straight-use-package-by-default t)
 
-(require 'setup-straight)
-(require 'setup-ui)
-(require 'setup-text-modes)
-(require 'setup-backups)
-(require 'setup-buffers)
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el"
+			 user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
 
 (use-package ace-window
   :ensure t
@@ -131,6 +141,10 @@
 	("gr" . 'xref-find-references)
 	("gy" . 'eglot-find-typeDefinition)))
 
+(use-package elec-pair
+  :config
+  (electric-pair-mode))
+
 (use-package embark
   :ensure t
   :bind
@@ -178,12 +192,28 @@
   :hook  (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package evil
-  :after evil-leader
   :ensure t
   :custom
   (evil-search-module 'evil-search)
   (evil-split-window-below  t)
   (evil-vsplit-window-right t)
+  (evil-want-keybinding nil)
+
+  :bind
+  ;; Leader bindings
+  (:map evil-normal-state-map
+   (",b" . 'consult-buffer)
+   (",d" . 'dired)
+   (",f" . 'find-file)
+   (",k" . 'kill-buffer)
+   (",g" . 'consult-ripgrep)
+   (",p" . 'project-find-file)
+   (",P" . 'project-switch-project)
+   (",s" . 'consult-line)
+   (",v" . 'magit-status)
+   (",w" . 'ace-window)
+   (",x" . 'execute-extended-command))
+
   :config
   (evil-mode t)
   ;; Unbind to not conflict with Embark
@@ -211,26 +241,6 @@
   :config
   (evil-escape-mode))
 
-(use-package evil-leader
-  :ensure t
-  :custom
-  (evil-want-keybinding nil)
-  :config
-  (global-evil-leader-mode)
-  (evil-leader/set-leader ",")
-  (evil-leader/set-key
-   "b" 'consult-buffer
-   "d" 'dired
-   "f" 'find-file
-   "k" 'kill-buffer
-   "g" 'consult-ripgrep
-   "p" 'project-find-file
-   "P" 'project-switch-project
-   "s" 'consult-line
-   "v" 'magit-status
-   "w" 'ace-window
-   "x" 'execute-extended-command))
-
 (use-package evil-surround
   :ensure t
   :config
@@ -239,7 +249,7 @@
 (use-package git-gutter-fringe
   :ensure t
   :demand fringe-helper
-  :hook ((prog-mode . git-gutter-mode))
+  :hook (prog-mode . git-gutter-mode)
   :config
   (set-face-foreground  'git-gutter-fr:added "lime green")
   (define-fringe-bitmap 'git-gutter-fr:added
@@ -250,6 +260,10 @@
   (set-face-foreground  'git-gutter-fr:deleted "firebrick")
   (define-fringe-bitmap 'git-gutter-fr:deleted
     [128 192 224 240] nil nil 'bottom))
+
+(use-package ibuffer
+  :bind
+  (("C-x C-b" . ibuffer)))
 
 (use-package ligature
   :ensure t
@@ -357,10 +371,18 @@
 
 (use-package posframe :ensure t)
 
+(use-package profile-dotemacs :ensure t :defer t)
+
 (use-package project
-  :after counsel
   :config
-  (add-hook 'project-find-functions #'amnn--try-project-root))
+  (defun amnn/try-project-root (dir)
+    (and-let* ((override (locate-dominating-file dir ".project")))
+      (cons '.project override)))
+
+  (add-hook 'project-find-functions #'amnn/try-project-root)
+
+  (cl-defmethod project-root ((project (head .project)))
+    (cdr project)))
 
 (use-package rainbow-delimiters
   :ensure t
@@ -381,6 +403,23 @@
   :ensure t
   :init (savehist-mode))
 
+(use-package smart-mode-line
+  :ensure t
+  :custom
+  (sml/no-confirm-load-theme t)
+  (sml/theme 'light)
+
+  :config
+  (sml/setup))
+
+(use-package twilight-bright-theme
+  :ensure t
+  :config
+  (load-theme 'twilight-bright t)
+  (set-face-attribute 'fringe                 nil :inherit 'default :background nil)
+  (set-face-attribute 'font-lock-doc-face     nil :extend t)
+  (set-face-attribute 'font-lock-comment-face nil :extend t))
+
 (use-package vertico
   :ensure t
   :init (vertico-mode))
@@ -389,12 +428,34 @@
   :ensure t
   :commands (wgrep-change-to-wgrep-mode))
 
+(use-package whitespace
+  :hook (prog-mode . whitespace-mode)
+
+  :custom
+  (whitespace-line-column 80)
+  (whitespace-style '(face lines-tail))
+
+  :custom-face
+  (whitespace-line ((t (:inherit error :foreground nil :background nil)))))
+
 (use-package yasnippet
   :ensure t
   :config
   (yas-global-mode +1))
 
 (use-package emacs
+  :hook
+  (before-save-hook . delete-trailing-whitespace)
+
   :custom
+  ;; Store backups centrally, not next to file.
+  (backup-directory-alist '(("" . "~/.emacs.d/backup")))
+  (mac-option-modifier 'meta)
+  (require-final-newline t)
   (warning-suppress-log-types '((comp)))
-  (mac-option-modifier 'meta))
+
+  :config
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (set-frame-font "Iosevka SS15 14"))

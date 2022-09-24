@@ -1,3 +1,0 @@
-(setq backup-directory-alist '(("" . "~/.emacs.d/backup")))
-
-(provide 'setup-backups)
