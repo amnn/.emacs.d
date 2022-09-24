@@ -8,11 +8,15 @@
 
 (use-package ace-window
   :ensure t
+  :after posframe
   :bind
   ("M-o" . 'ace-window)
   :custom
   (aw-dispatch-always t)
-  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+
+  :config
+  (ace-window-posframe-mode))
 
 (use-package consult
   :ensure t
@@ -28,7 +32,6 @@
    ("C-S-s"   . consult-line-multi)
    :map minibuffer-local-map
    ("M-r"     . consult-history))
-
 
   :hook (completion-list-mode . consult-preview-at-point-mode)
 
@@ -292,6 +295,8 @@
      ((when-let (x (assq (aref word (1- (length word)))
 			 amnn/orderless-dispatch-alist))
 	(cons (cdr x)(substring word 0 -1)))))))
+
+(use-package posframe :ensure t)
 
 (use-package project
   :after counsel
