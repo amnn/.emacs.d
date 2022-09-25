@@ -480,6 +480,7 @@
   (backup-directory-alist '(("" . "~/.emacs.d/backup")))
   (mac-option-modifier 'meta)
   (require-final-newline t)
+  (shell-file-name "/opt/homebrew/bin/fish")
   (warning-suppress-log-types '((comp)))
 
   :config
