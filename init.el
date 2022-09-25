@@ -487,4 +487,4 @@
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
-  (set-frame-font "Iosevka SS15 14"))
+  (set-frame-font "Iosevka SS15 16"))
