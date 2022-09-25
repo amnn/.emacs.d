@@ -1,3 +1,9 @@
+;;; Package Management ===================================================== ;;;
+
+;; Use Straight for package management to keep all configuration
+;; contained within init.el.  This needs to go first because all other
+;; packages are pulled in with straight.
+
 (setq straight-use-package-by-default t)
 
 (defvar bootstrap-version)
@@ -14,7 +20,12 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+;; Pull in `use-package' to allow grouping of configuration by
+;; package and make autoloading based on keybinds and hooks easy.
+
 (straight-use-package 'use-package)
+
+;;; Windowing ============================================================== ;;;
 
 (use-package ace-window
   :ensure t
@@ -64,6 +75,10 @@
 
   (ace-window-posframe-mode))
 
+(use-package posframe :ensure t)
+
+;;; Minibuffer and Completion Frameworks =================================== ;;;
+
 (use-package consult
   :ensure t
   :bind
@@ -110,41 +125,6 @@
   :init
   (global-corfu-mode))
 
-(use-package dashboard
-  :ensure t
-  :config
-  (dashboard-setup-startup-hook))
-
-
-(use-package dired
-  :straight (:type built-in)
-  :after evil-collection
-  :commands (dired dired-jump)
-  :custom
-  (dired-dwim-target t)
-  :config
-  (evil-collection-define-key 'normal 'dired-mode-map "h" 'dired-up-directory)
-  (evil-collection-define-key 'normal 'dired-mode-map "l" 'dired-find-file)
-  (evil-collection-define-key 'normal 'dired-mode-map "L" 'dired-display-file))
-
-(use-package eglot
-  :ensure t
-  :after evil
-  :bind
-  (:map evil-normal-state-map
-	("[g" . 'flymake-goto-prev-error)
-	("]g" . 'flymake-goto-next-error)
-	("ga" . 'eglot-code-actions)
-	("gx" . 'eglot-code-action-quickfix)
-	("gi" . 'eglot-find-implementation)
-	("gd" . 'eglot-find-declaration)
-	("gr" . 'xref-find-references)
-	("gy" . 'eglot-find-typeDefinition)))
-
-(use-package elec-pair
-  :config
-  (electric-pair-mode))
-
 (use-package embark
   :ensure t
   :bind
@@ -190,117 +170,6 @@
   :demand t
   :after (embark consult)
   :hook  (embark-collect-mode . consult-preview-at-point-mode))
-
-(use-package evil
-  :ensure t
-  :custom
-  (evil-search-module 'evil-search)
-  (evil-split-window-below  t)
-  (evil-vsplit-window-right t)
-  (evil-want-keybinding nil)
-
-  :bind
-  ;; Leader bindings
-  (:map evil-normal-state-map
-   (",b" . 'consult-buffer)
-   (",d" . 'dired)
-   (",f" . 'find-file)
-   (",k" . 'kill-buffer)
-   (",g" . 'consult-ripgrep)
-   (",p" . 'project-find-file)
-   (",P" . 'project-switch-project)
-   (",s" . 'consult-line)
-   (",v" . 'magit-status)
-   (",w" . 'ace-window)
-   (",x" . 'execute-extended-command))
-
-  :config
-  (evil-mode t)
-  ;; Unbind to not conflict with Embark
-  (unbind-key "C-." evil-normal-state-map))
-
-(use-package evil-collection
-  :after evil
-  :ensure t
-  :custom
-  (evil-want-integration t)
-  :config
-  (evil-collection-init))
-
-(use-package evil-easymotion
-  :after evil
-  :ensure t
-  :config
-  (evilem-default-keybindings "SPC"))
-
-(use-package evil-escape
-  :after evil
-  :ensure t
-  :custom
-  (evil-escape-key-sequence "jk")
-  :config
-  (evil-escape-mode))
-
-(use-package evil-surround
-  :ensure t
-  :config
-  (global-evil-surround-mode 1))
-
-(use-package git-gutter-fringe
-  :ensure t
-  :demand fringe-helper
-  :hook (prog-mode . git-gutter-mode)
-  :config
-  (set-face-foreground  'git-gutter-fr:added "lime green")
-  (define-fringe-bitmap 'git-gutter-fr:added
-    [224] nil nil '(center repeated))
-  (set-face-foreground  'git-gutter-fr:modified "orange")
-  (define-fringe-bitmap 'git-gutter-fr:modified
-    [224] nil nil '(center repeated))
-  (set-face-foreground  'git-gutter-fr:deleted "firebrick")
-  (define-fringe-bitmap 'git-gutter-fr:deleted
-    [128 192 224 240] nil nil 'bottom))
-
-(use-package ibuffer
-  :bind
-  (("C-x C-b" . ibuffer)))
-
-(use-package ligature
-  :ensure t
-  :config
-  (ligature-set-ligatures
-   't
-   '("<--" "<---" "<<-" "<-" "->" "->>" "-->" "--->"
-     "<==" "<===" "<<=" "<=" "=>" "=>>" "==>" "===>"
-
-     ">=" ">>="
-
-     "<->" "<-->" "<--->" "<---->"
-     "<=>" "<==>" "<===>" "<====>"
-
-     "<!--" "<!---" "<***>"
-
-     "::" ":::"
-     "++" "+++"
-
-     "<~~" "</" "</>" "/>" "~~>"
-
-     "===" "==" "!==" "!=" "<>"
-
-     ":-" ":+" "<*" "<*>" "*>" "+:" "-:"
-     "<:" ":=" "<|" "<|>" "|>" "=:" ":>"))
-
-  (global-ligature-mode t))
-
-(use-package magit
-  :ensure t
-  :bind
-  (("C-x g"   . magit-status)
-   ("C-x C-g" . magit-status)))
-
-(use-package markdown-mode
-  :ensure t
-  :mode ("README\\.md\\'" . gfm-mode))
 
 (use-package marginalia
   :ensure t
@@ -369,9 +238,26 @@
 			 amnn/orderless-dispatch-alist))
 	(cons (cdr x)(substring word 0 -1)))))))
 
-(use-package posframe :ensure t)
+(use-package savehist
+  :ensure t
+  :init (savehist-mode))
 
-(use-package profile-dotemacs :ensure t :defer t)
+(use-package vertico
+  :ensure t
+  :init (vertico-mode))
+
+;;; File/Text Editing ====================================================== ;;;
+
+(use-package dired
+  :straight (:type built-in)
+  :after evil-collection
+  :commands (dired dired-jump)
+  :custom
+  (dired-dwim-target t)
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map "h" 'dired-up-directory)
+  (evil-collection-define-key 'normal 'dired-mode-map "l" 'dired-find-file)
+  (evil-collection-define-key 'normal 'dired-mode-map "L" 'dired-display-file))
 
 (use-package project
   :config
@@ -384,9 +270,94 @@
   (cl-defmethod project-root ((project (head .project)))
     (cdr project)))
 
-(use-package rainbow-delimiters
+(use-package whitespace
+  :hook (prog-mode . whitespace-mode)
+
+  :custom
+  (whitespace-line-column 80)
+  (whitespace-style '(face lines-tail))
+
+  :custom-face
+  (whitespace-line ((t (:inherit error :foreground nil :background nil)))))
+
+;;; Vim Emulation =========================================================  ;;;
+
+(use-package evil
   :ensure t
-  :hook (prog-mode . rainbow-delimiters-mode))
+  :custom
+  (evil-search-module 'evil-search)
+  (evil-split-window-below  t)
+  (evil-vsplit-window-right t)
+  (evil-want-keybinding nil)
+
+  :bind
+  ;; Leader bindings
+  (:map evil-normal-state-map
+   (",b" . 'consult-buffer)
+   (",d" . 'dired)
+   (",f" . 'find-file)
+   (",k" . 'kill-buffer)
+   (",g" . 'consult-ripgrep)
+   (",p" . 'project-find-file)
+   (",P" . 'project-switch-project)
+   (",s" . 'consult-line)
+   (",v" . 'magit-status)
+   (",w" . 'ace-window)
+   (",x" . 'execute-extended-command))
+
+  :config
+  (evil-mode t)
+  ;; Unbind to not conflict with Embark
+  (unbind-key "C-." evil-normal-state-map))
+
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :custom
+  (evil-want-integration t)
+  :config
+  (evil-collection-init))
+
+(use-package evil-easymotion
+  :after evil
+  :ensure t
+  :config
+  (evilem-default-keybindings "SPC"))
+
+(use-package evil-escape
+  :after evil
+  :ensure t
+  :custom
+  (evil-escape-key-sequence "jk")
+  :config
+  (evil-escape-mode))
+
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
+
+;;; Language Server ======================================================== ;;;
+
+(use-package eglot
+  :ensure t
+  :after evil
+  :bind
+  (:map evil-normal-state-map
+	("[g" . 'flymake-goto-prev-error)
+	("]g" . 'flymake-goto-next-error)
+	("ga" . 'eglot-code-actions)
+	("gx" . 'eglot-code-action-quickfix)
+	("gi" . 'eglot-find-implementation)
+	("gd" . 'eglot-find-declaration)
+	("gr" . 'xref-find-references)
+	("gy" . 'eglot-find-typeDefinition)))
+
+;;; Language Major Modes =================================================== ;;;
+
+(use-package markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode))
 
 (use-package rust-mode
   :ensure t
@@ -399,9 +370,87 @@
   (add-hook 'rust-mode-hook 'eglot-ensure)
   (add-hook 'rust-mode-hook #'widen-fill))
 
-(use-package savehist
+;;; Version Control ======================================================== ;;;
+
+(use-package git-gutter-fringe
   :ensure t
-  :init (savehist-mode))
+  :demand fringe-helper
+  :hook (prog-mode . git-gutter-mode)
+  :config
+  (set-face-foreground  'git-gutter-fr:added "lime green")
+  (define-fringe-bitmap 'git-gutter-fr:added
+    [224] nil nil '(center repeated))
+  (set-face-foreground  'git-gutter-fr:modified "orange")
+  (define-fringe-bitmap 'git-gutter-fr:modified
+    [224] nil nil '(center repeated))
+  (set-face-foreground  'git-gutter-fr:deleted "firebrick")
+  (define-fringe-bitmap 'git-gutter-fr:deleted
+    [128 192 224 240] nil nil 'bottom))
+
+(use-package magit
+  :ensure t
+  :bind
+  (("C-x g"   . magit-status)
+   ("C-x C-g" . magit-status)))
+
+;;; Utilities ============================================================== ;;;
+
+(use-package ibuffer
+  :bind
+  (("C-x C-b" . ibuffer)))
+
+(use-package profile-dotemacs :ensure t :defer t)
+
+(use-package wgrep
+  :ensure t
+  :commands (wgrep-change-to-wgrep-mode))
+
+(use-package yasnippet
+  :ensure t
+  :config
+  (yas-global-mode +1))
+
+;;; Appearance ============================================================= ;;;
+
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
+
+(use-package elec-pair
+  :config
+  (electric-pair-mode))
+
+(use-package ligature
+  :ensure t
+  :config
+  (ligature-set-ligatures
+   't
+   '("<--" "<---" "<<-" "<-" "->" "->>" "-->" "--->"
+     "<==" "<===" "<<=" "<=" "=>" "=>>" "==>" "===>"
+
+     ">=" ">>="
+
+     "<->" "<-->" "<--->" "<---->"
+     "<=>" "<==>" "<===>" "<====>"
+
+     "<!--" "<!---" "<***>"
+
+     "::" ":::"
+     "++" "+++"
+
+     "<~~" "</" "</>" "/>" "~~>"
+
+     "===" "==" "!==" "!=" "<>"
+
+     ":-" ":+" "<*" "<*>" "*>" "+:" "-:"
+     "<:" ":=" "<|" "<|>" "|>" "=:" ":>"))
+
+  (global-ligature-mode t))
+
+(use-package rainbow-delimiters
+  :ensure t
+  :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package smart-mode-line
   :ensure t
@@ -420,28 +469,7 @@
   (set-face-attribute 'font-lock-doc-face     nil :extend t)
   (set-face-attribute 'font-lock-comment-face nil :extend t))
 
-(use-package vertico
-  :ensure t
-  :init (vertico-mode))
-
-(use-package wgrep
-  :ensure t
-  :commands (wgrep-change-to-wgrep-mode))
-
-(use-package whitespace
-  :hook (prog-mode . whitespace-mode)
-
-  :custom
-  (whitespace-line-column 80)
-  (whitespace-style '(face lines-tail))
-
-  :custom-face
-  (whitespace-line ((t (:inherit error :foreground nil :background nil)))))
-
-(use-package yasnippet
-  :ensure t
-  :config
-  (yas-global-mode +1))
+;;; Misc. ================================================================== ;;;
 
 (use-package emacs
   :hook
