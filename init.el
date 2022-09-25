@@ -353,6 +353,15 @@
 	("gr" . 'xref-find-references)
 	("gy" . 'eglot-find-typeDefinition)))
 
+
+;;; Debugging ============================================================== ;;;
+
+(use-package realgud :ensure t :defer t)
+
+(use-package realgud-lldb
+  :straight (:host github :repo "realgud/realgud-lldb" :branch "master")
+  :commands (lldb))
+
 ;;; Language Major Modes =================================================== ;;;
 
 (use-package markdown-mode
