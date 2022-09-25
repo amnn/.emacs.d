@@ -359,15 +359,15 @@
   :ensure t
   :mode ("README\\.md\\'" . gfm-mode))
 
-(use-package rust-mode
+(use-package rustic
   :ensure t
-  :mode "\\.rs\\'"
+  :custom
+  (rustic-lsp-client 'eglot)
+  (rustic-lsp-server 'rust-analyzer)
   :config
   (defun widen-fill ()
     (setq-local fill-column 100)
     (setq-local whitespace-line-column 100))
-  (add-to-list 'eglot-server-programs '((rust-mode) "rust-analyzer"))
-  (add-hook 'rust-mode-hook 'eglot-ensure)
   (add-hook 'rust-mode-hook #'widen-fill))
 
 ;;; Version Control ======================================================== ;;;
