@@ -130,6 +130,7 @@
   :bind
   (("C-."   . embark-act)
    ("M-."   . embark-dwim)
+   ("C-,"   . amnn/embark-act-no-quit)
    ("C-h B" . embark-bindings)
 
    :map embark-file-map
@@ -142,6 +143,9 @@
    ("o" . amnn/embark-ace-bookmark-jump))
 
   :custom
+  (embark-indicators '(embark-highlight-indicator
+		       embark-isearch-highlight-indicator
+		       embark-minimal-indicator))
   (prefix-help-command #'embark-prefix-help-command)
   (enable-recursive-minibuffers t)
 
@@ -163,7 +167,13 @@
 
   (amnn/embark-ace-action find-file)
   (amnn/embark-ace-action switch-to-buffer)
-  (amnn/embark-ace-action bookmark-jump))
+  (amnn/embark-ace-action bookmark-jump)
+
+  (defun amnn/embark-act-no-quit ()
+    "Run action but don't quit the minibuffer afterwards."
+    (interactive)
+    (let ((embark-quit-after-action nil))
+      (embark-act))))
 
 (use-package embark-consult
   :ensure t
