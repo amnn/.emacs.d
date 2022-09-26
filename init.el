@@ -433,6 +433,8 @@
 
 (use-package dashboard
   :ensure t
+  :custom
+  (dashboard-startup-banner 'logo)
   :config
   (dashboard-setup-startup-hook))
 
