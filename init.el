@@ -473,9 +473,11 @@
 
 (use-package smart-mode-line
   :ensure t
+  ;; So that the mode-line stays respectful of the theme.
+  :after twilight-bright-theme
   :custom
   (sml/no-confirm-load-theme t)
-  (sml/theme 'light)
+  (sml/theme 'respectful)
 
   :config
   (sml/setup))
