@@ -484,11 +484,42 @@
 
 (use-package twilight-bright-theme
   :ensure t
+  :custom
+  (use-file-dialog nil)
+  (use-dialog-box  nil)
+
+  (default-frame-alist
+    '((internal-border-width . 24)
+      (right-fringe . 0)))
+
+  (window-divider-default-right-width 24)
+  (window-divider-default-places 'right-only)
+
   :config
   (load-theme 'twilight-bright t)
+
+  (set-frame-font "Iosevka SS15 16")
+
+  (menu-bar-mode       -1)
+  (scroll-bar-mode     -1)
+  (tool-bar-mode       -1)
+  (window-divider-mode +1)
+
+  ;; Nicer glyphs for continuation and wrap
+  (set-display-table-slot standard-display-table
+                          'truncation (make-glyph-code ?…))
+  (set-display-table-slot standard-display-table
+                          'wrap (make-glyph-code ?-))
+
   (set-face-attribute 'fringe                 nil :inherit 'default :background nil)
   (set-face-attribute 'font-lock-doc-face     nil :extend t)
-  (set-face-attribute 'font-lock-comment-face nil :extend t))
+  (set-face-attribute 'font-lock-comment-face nil :extend t)
+
+  ;; Can't use :custom-face because we need to query the current background
+  (custom-set-faces
+   `(window-divider ((t (:foreground ,(face-attribute 'default :background)))))
+   `(window-divider-first-pixel ((t (:inherit window-divider))))
+   `(window-divider-last-pixel  ((t (:inherit window-divider))))))
 
 ;;; Misc. ================================================================== ;;;
 
@@ -502,10 +533,4 @@
   (mac-option-modifier 'meta)
   (require-final-newline t)
   (shell-file-name "/opt/homebrew/bin/fish")
-  (warning-suppress-log-types '((comp)))
-
-  :config
-  (menu-bar-mode -1)
-  (scroll-bar-mode -1)
-  (tool-bar-mode -1)
-  (set-frame-font "Iosevka SS15 16"))
+  (warning-suppress-log-types '((comp))))
