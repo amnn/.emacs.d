@@ -476,17 +476,18 @@
 
 (use-package smart-mode-line
   :ensure t
-  ;; So that the mode-line stays respectful of the theme.
-  :after twilight-bright-theme
+  :commands (sml/setup)
   :custom
   (sml/no-confirm-load-theme t)
-  (sml/theme 'respectful)
+  (sml/theme 'respectful))
 
-  :config
-  (sml/setup))
+(use-package twilight-anti-bright-theme :ensure t :defer t)
+(use-package twilight-bright-theme      :ensure t :defer t)
 
-(use-package twilight-bright-theme
-  :ensure t
+(use-package theming
+  :straight nil :demand t :no-require t
+  :after (twilight-anti-bright-theme twilight-bright-theme)
+
   :custom
   (use-file-dialog nil)
   (use-dialog-box  nil)
@@ -498,9 +499,7 @@
   (window-divider-default-right-width 24)
   (window-divider-default-places 'right-only)
 
-  :config
-  (load-theme 'twilight-bright t)
-
+  :preface
   (set-frame-font "Iosevka SS15 16")
 
   (menu-bar-mode       -1)
@@ -514,15 +513,28 @@
   (set-display-table-slot standard-display-table
                           'wrap (make-glyph-code ?-))
 
-  (set-face-attribute 'fringe                 nil :inherit 'default :background nil)
-  (set-face-attribute 'font-lock-doc-face     nil :extend t)
-  (set-face-attribute 'font-lock-comment-face nil :extend t)
+  (defun load-theme-matching-system ()
+    "Pick which theme to run based on whether the system is light or dark."
+    (pcase (plist-get (mac-application-state) :appearance)
+      ("NSAppearanceNameAqua"
+       (load-theme 'twilight-bright t))
+      ("NSAppearanceNameDarkAqua"
+       (load-theme 'twilight-anti-bright t)))
 
-  ;; Can't use :custom-face because we need to query the current background
-  (custom-set-faces
-   `(window-divider ((t (:foreground ,(face-attribute 'default :background)))))
-   `(window-divider-first-pixel ((t (:inherit window-divider))))
-   `(window-divider-last-pixel  ((t (:inherit window-divider))))))
+    ;; Apply tweaks to faces in current theme, after it has loaded.
+    (set-face-attribute 'fringe nil :inherit 'default :background nil)
+    (set-face-attribute 'font-lock-doc-face nil :extend t)
+    (set-face-attribute 'font-lock-comment-face nil :extend t)
+
+    (custom-set-faces
+    `(window-divider ((t (:foreground ,(face-attribute 'default :background)))))
+    `(window-divider-first-pixel ((t (:inherit window-divider))))
+    `(window-divider-last-pixel  ((t (:inherit window-divider)))))
+
+    (sml/setup))
+
+  (load-theme-matching-system)
+  (add-hook 'mac-effective-appearance-change-hook #'load-theme-matching-system))
 
 ;;; Misc. ================================================================== ;;;
 
