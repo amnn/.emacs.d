@@ -303,17 +303,17 @@
   :bind
   ;; Leader bindings
   (:map evil-normal-state-map
-   (",b" . 'consult-buffer)
-   (",d" . 'dired)
-   (",f" . 'find-file)
-   (",k" . 'kill-buffer)
-   (",g" . 'consult-ripgrep)
-   (",p" . 'project-find-file)
-   (",P" . 'project-switch-project)
-   (",s" . 'consult-line)
-   (",v" . 'magit-status)
-   (",w" . 'ace-window)
-   (",x" . 'execute-extended-command))
+   ("SPC b" . 'consult-buffer)
+   ("SPC d" . 'dired)
+   ("SPC f" . 'find-file)
+   ("SPC k" . 'kill-buffer)
+   ("SPC g" . 'consult-ripgrep)
+   ("SPC p" . 'project-find-file)
+   ("SPC P" . 'project-switch-project)
+   ("SPC s" . 'consult-line)
+   ("SPC v" . 'magit-status)
+   ("SPC w" . 'ace-window)
+   ("SPC x" . 'execute-extended-command))
 
   :config
   (evil-mode t)
@@ -332,7 +332,7 @@
   :after evil
   :ensure t
   :config
-  (evilem-default-keybindings "SPC"))
+  (evilem-default-keybindings "SPC SPC"))
 
 (use-package evil-escape
   :after evil
