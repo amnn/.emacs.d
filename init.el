@@ -403,6 +403,10 @@
   :ensure t
   :demand fringe-helper
   :hook (prog-mode . git-gutter-mode)
+  :bind
+  (:map evil-motion-state-map
+   ("]h" . 'git-gutter:next-hunk)
+   ("[h" . 'git-gutter:previous-hunk))
   :config
   (set-face-foreground  'git-gutter-fr:added "lime green")
   (define-fringe-bitmap 'git-gutter-fr:added
