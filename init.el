@@ -552,6 +552,7 @@
   :custom
   ;; Store backups centrally, not next to file.
   (backup-directory-alist '(("" . "~/.emacs.d/backup")))
+  (indent-tabs-mode nil)
   (mac-option-modifier 'meta)
   (require-final-newline t)
   (shell-file-name "/opt/homebrew/bin/fish")
