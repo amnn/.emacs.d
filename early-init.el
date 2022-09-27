@@ -1,8 +1,8 @@
 ;; Disable package.el in favor of straight.el
 (setq package-enable-at-startup nil)
 
-(push "/opt/homebrew/bin" exec-path)
-(push "~/.local/bin" exec-path)
+(setenv "SHELL" "/opt/homebrew/bin/fish")
+(setq shell-file-name "/opt/homebrew/bin/fish")
 
 (setenv
  "LIBRARY_PATH"

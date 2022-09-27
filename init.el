@@ -546,6 +546,12 @@
 
 ;;; Misc. ================================================================== ;;;
 
+(use-package exec-path-from-shell
+  :ensure t
+  :demand t
+  :config
+  (exec-path-from-shell-initialize))
+
 (use-package emacs
   :hook
   (before-save-hook . delete-trailing-whitespace)
@@ -556,5 +562,4 @@
   (indent-tabs-mode nil)
   (mac-option-modifier 'meta)
   (require-final-newline t)
-  (shell-file-name "/opt/homebrew/bin/fish")
   (warning-suppress-log-types '((comp))))
