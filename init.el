@@ -380,6 +380,11 @@
 
 (use-package rustic
   :ensure t
+  ;; Hack to re-override rust-mode's habit of stomping the rustic-mode
+  ;; in the auto-mode-alist when it gets loaded
+  :after rust-mode :mode ("\\.rs\\'" . rustic-mode)
+  :bind
+  (("C-c C-t C-r" . rustic-cargo-test-rerun))
   :custom
   (rustic-lsp-client 'eglot)
   (rustic-lsp-server 'rust-analyzer)
