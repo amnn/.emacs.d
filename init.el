@@ -304,6 +304,7 @@
   ;; Leader bindings
   (:map evil-normal-state-map
    ("SPC b" . 'consult-buffer)
+   ("SPC B" . 'ibuffer)
    ("SPC d" . 'dired)
    ("SPC f" . 'find-file)
    ("SPC k" . 'kill-buffer)
@@ -332,7 +333,7 @@
   :after evil
   :ensure t
   :config
-  (evilem-default-keybindings "SPC SPC"))
+  (define-key evil-normal-state-map (kbd "SPC SPC") evilem-map))
 
 (use-package evil-escape
   :after evil
