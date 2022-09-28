@@ -547,14 +547,14 @@
        (amnn/push-kitty-theme "dark")))
 
     ;; Apply tweaks to faces in current theme, after it has loaded.
-    (set-face-attribute 'fringe nil :inherit 'default :background nil)
+    (set-face-attribute 'fringe nil :background (face-attribute 'default :background))
     (set-face-attribute 'font-lock-doc-face nil :extend t)
     (set-face-attribute 'font-lock-comment-face nil :extend t)
 
     (custom-set-faces
-    `(window-divider ((t (:foreground ,(face-attribute 'default :background)))))
-    `(window-divider-first-pixel ((t (:inherit window-divider))))
-    `(window-divider-last-pixel  ((t (:inherit window-divider)))))
+     `(window-divider ((t (:foreground ,(face-attribute 'default :background)))))
+     `(window-divider-first-pixel ((t (:inherit window-divider))))
+     `(window-divider-last-pixel  ((t (:inherit window-divider)))))
 
     (sml/setup))
 
