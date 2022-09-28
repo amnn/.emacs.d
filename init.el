@@ -392,10 +392,10 @@
   (rustic-lsp-client 'eglot)
   (rustic-lsp-server 'rust-analyzer)
   :config
-  (defun widen-fill ()
+  (defun amnn/widen-fill ()
     (setq-local fill-column 100)
     (setq-local whitespace-line-column 100))
-  (add-hook 'rust-mode-hook #'widen-fill))
+  (add-hook 'rust-mode-hook #'amnn/widen-fill))
 
 ;;; Version Control ======================================================== ;;;
 
@@ -527,7 +527,7 @@
   (set-display-table-slot standard-display-table
                           'wrap (make-glyph-code ?-))
 
-  (defun load-theme-matching-system ()
+  (defun amnn/load-theme-matching-system ()
     "Pick which theme to run based on whether the system is light or dark."
     (pcase (plist-get (mac-application-state) :appearance)
       ("NSAppearanceNameAqua"
@@ -547,8 +547,9 @@
 
     (sml/setup))
 
-  (load-theme-matching-system)
-  (add-hook 'mac-effective-appearance-change-hook #'load-theme-matching-system))
+  (amnn/load-theme-matching-system)
+  (add-hook 'mac-effective-appearance-change-hook
+            #'amnn/load-theme-matching-system))
 
 ;;; Misc. ================================================================== ;;;
 
