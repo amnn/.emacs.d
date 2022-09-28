@@ -500,7 +500,7 @@
 
 (use-package theming
   :straight nil :demand t :no-require t
-  :after (twilight-anti-bright-theme twilight-bright-theme)
+  :after (exec-path-from-shell twilight-anti-bright-theme twilight-bright-theme)
 
   :custom
   (use-file-dialog nil)
@@ -527,13 +527,24 @@
   (set-display-table-slot standard-display-table
                           'wrap (make-glyph-code ?-))
 
+  (defun amnn/push-kitty-theme (light-or-dark)
+    "Send kitty a remote message to change its theme, to match
+     Emacs. LIGHT-OR-DARK is a string literal, either `light' or
+     `dark'."
+    (call-process "/Applications/kitty.app/Contents/MacOS/kitty" nil nil nil
+		  "@" "--to" "unix:/tmp/kitty-pipe"
+                  "set-colors" "--all" "--configured"
+                  (concat "~/.config/kitty/kitty-" light-or-dark ".conf")))
+
   (defun amnn/load-theme-matching-system ()
     "Pick which theme to run based on whether the system is light or dark."
     (pcase (plist-get (mac-application-state) :appearance)
       ("NSAppearanceNameAqua"
-       (load-theme 'twilight-bright t))
+       (load-theme 'twilight-bright t)
+       (amnn/push-kitty-theme "light"))
       ("NSAppearanceNameDarkAqua"
-       (load-theme 'twilight-anti-bright t)))
+       (load-theme 'twilight-anti-bright t)
+       (amnn/push-kitty-theme "dark")))
 
     ;; Apply tweaks to faces in current theme, after it has loaded.
     (set-face-attribute 'fringe nil :inherit 'default :background nil)
