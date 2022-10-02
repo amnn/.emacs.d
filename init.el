@@ -295,7 +295,8 @@
 (use-package evil
   :ensure t
   :custom
-  (evil-search-module 'evil-search)
+  (evil-search-module #'evil-search)
+  (evil-undo-system   #'undo-redo)
   (evil-split-window-below  t)
   (evil-vsplit-window-right t)
   (evil-want-keybinding nil)
