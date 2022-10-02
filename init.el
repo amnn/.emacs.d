@@ -361,7 +361,8 @@
 	("ga" . 'eglot-code-actions)
 	("gx" . 'eglot-code-action-quickfix)
 	("gi" . 'eglot-find-implementation)
-	("gd" . 'eglot-find-declaration)
+	("gd" . 'xref-find-definitions)
+	("gD" . 'eglot-find-declaration)
 	("gr" . 'xref-find-references)
 	("gy" . 'eglot-find-typeDefinition)))
 
