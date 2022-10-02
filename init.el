@@ -354,6 +354,7 @@
 (use-package eglot
   :ensure t
   :after evil
+
   :bind
   (:map evil-normal-state-map
 	("[g" . 'flymake-goto-prev-error)
@@ -364,7 +365,15 @@
 	("gd" . 'xref-find-definitions)
 	("gD" . 'eglot-find-declaration)
 	("gr" . 'xref-find-references)
-	("gy" . 'eglot-find-typeDefinition)))
+	("gy" . 'eglot-find-typeDefinition))
+
+  :init
+  (defun amnn/eglot-prefer-flymake-eldoc ()
+    "Show errors/warnings from flymake in eldoc, over eglot's LSP based
+     documentations."
+    (push 'flymake-eldoc-function eldoc-documentation-functions))
+
+  (add-hook 'eglot-managed-mode-hook 'amnn/eglot-prefer-flymake-eldoc))
 
 
 ;;; Debugging ============================================================== ;;;
