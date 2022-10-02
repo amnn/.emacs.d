@@ -392,6 +392,22 @@
   :ensure t
   :mode ("README\\.md\\'" . gfm-mode))
 
+(use-package move-mode
+  :straight (:type git :repo "/Users/amnn/move-mode" :branch "main")
+
+  :config
+  (add-to-list 'eglot-server-programs '(move-mode "move-analyzer"))
+
+  (defun amnn/move-lsp-project-root (dir)
+    (and-let* (((boundp 'eglot-lsp-context))
+               (eglot-lsp-context)
+               (override (locate-dominating-file dir "Move.toml")))
+      (cons 'Move.toml override)))
+
+  (add-hook 'project-find-functions #'amnn/move-lsp-project-root)
+  (cl-defmethod project-root ((project (head Move.toml)))
+    (cdr project)))
+
 (use-package rustic
   :ensure t
   ;; Hack to re-override rust-mode's habit of stomping the rustic-mode
