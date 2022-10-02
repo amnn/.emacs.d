@@ -394,6 +394,7 @@
 
 (use-package move-mode
   :straight (:type git :repo "/Users/amnn/move-mode" :branch "main")
+  :hook     (move-mode . eglot-ensure)
 
   :config
   (add-to-list 'eglot-server-programs '(move-mode "move-analyzer"))
