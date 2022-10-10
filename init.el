@@ -386,6 +386,8 @@
 
 ;;; Language Major Modes =================================================== ;;;
 
+(use-package clojure-mode :ensure t)
+
 (use-package fish-mode :ensure t)
 
 (use-package markdown-mode
