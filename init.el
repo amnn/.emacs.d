@@ -427,6 +427,11 @@
     (setq-local whitespace-line-column 100))
   (add-hook 'rust-mode-hook #'amnn/widen-fill))
 
+(use-package typescript-mode
+  :ensure t
+  :custom
+  (typescript-indent-level 2))
+
 ;;; Version Control ======================================================== ;;;
 
 (use-package git-gutter-fringe
