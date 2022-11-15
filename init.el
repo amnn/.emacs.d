@@ -630,4 +630,5 @@
   (indent-tabs-mode nil)
   (mac-option-modifier 'meta)
   (require-final-newline t)
+  (scroll-margin 5)
   (warning-suppress-log-types '((comp))))
