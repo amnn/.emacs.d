@@ -429,8 +429,23 @@
 
 (use-package typescript-mode
   :ensure t
+  :hook   (typescript-mode . eglot-ensure)
   :custom
-  (typescript-indent-level 2))
+  (typescript-indent-level 2)
+
+  :config
+  (add-to-list 'eglot-server-programs
+               '(typescript-mode "typescript-language-server" "--stdio"))
+
+  (defun amnn/ts-lsp-project-root (dir)
+    (and-let* (((boundp 'eglot-lsp-context))
+               (eglot-lsp-context)
+               (override (locate-dominating-file dir "tsconfig.json")))
+      (cons 'tsconfig.json override)))
+
+  (add-hook 'project-find-functions #'amnn/ts-lsp-project-root)
+  (cl-defmethod project-root ((project (head tsconfig.json)))
+    (cdr project)))
 
 ;;; Version Control ======================================================== ;;;
 
