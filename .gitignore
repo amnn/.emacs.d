@@ -1,12 +1,14 @@
 auto-save-list/*
 backup/*
 bookmarks
+.cask/*
 eln-cache/*
 elpa/*
 eshell/*
 history
 projects
 recentf
+recentf~
 server/*
 straight/*
 transient/*
