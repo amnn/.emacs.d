@@ -100,7 +100,10 @@
   ;; Use Consult to select xref locations with preview
   (xref-show-xrefs-function       #'consult-xref)
   (xref-show-definitions-function #'consult-xref)
-  (consult-narrow-key (kbd "C-=")))
+  (consult-narrow-key (kbd "C-="))
+
+  :config
+  (advice-add #'project-find-regexp :override #'consult-ripgrep))
 
 (use-package consult-eglot
   :ensure t
