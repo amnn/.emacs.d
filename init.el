@@ -450,6 +450,9 @@
   (cl-defmethod project-root ((project (head tsconfig.json)))
     (cdr project)))
 
+(use-package yaml-mode
+  :ensure t)
+
 ;;; Version Control ======================================================== ;;;
 
 (use-package git-gutter-fringe
