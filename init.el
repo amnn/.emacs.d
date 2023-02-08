@@ -590,7 +590,7 @@
     (call-process "/Applications/kitty.app/Contents/MacOS/kitty" nil nil nil
 		  "@" "--to" "unix:/tmp/kitty-pipe"
                   "set-colors" "--all" "--configured"
-                  (concat "~/.config/kitty/kitty-" light-or-dark ".conf")))
+                  (concat "~/.config/kitty/ayu-" light-or-dark ".conf")))
 
   (defun amnn/load-theme-matching-system ()
     "Pick which theme to run based on whether the system is light or dark."
