@@ -480,6 +480,21 @@
   (("C-x g"   . magit-status)
    ("C-x C-g" . magit-status)))
 
+(use-package git-link
+  :straight (:host github :repo "sshaw/git-link" :branch "f5691f8") ;; v0.8.6
+  :bind
+  (:map evil-normal-state-map
+        ("gh" . git-link)
+        ("gH" . amnn/git-link-open-in-browser))
+
+  :init
+  (defun amnn/git-link-open-in-browser ()
+    "Get the git-link for the current point or region and open it in
+     the browser."
+    (interactive)
+    (let ((git-link-open-in-browser t))
+      (call-interactively 'git-link))))
+
 ;;; Utilities ============================================================== ;;;
 
 (use-package ibuffer
