@@ -313,6 +313,7 @@
    ("SPC f" . 'find-file)
    ("SPC k" . 'kill-buffer)
    ("SPC g" . 'consult-ripgrep)
+   ("SPC m" . 'switch-to-minibuffer)
    ("SPC p" . 'project-find-file)
    ("SPC P" . 'project-switch-project)
    ("SPC s" . 'consult-line)
