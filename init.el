@@ -275,6 +275,12 @@
   (evil-collection-define-key 'normal 'dired-mode-map "l" 'dired-find-file)
   (evil-collection-define-key 'normal 'dired-mode-map "L" 'dired-display-file))
 
+(use-package paredit
+  :ensure t
+  :hook
+  (emacs-lisp-mode . paredit-mode)
+  (janet-mode . paredit-mode))
+
 (use-package project
   :config
   (defun amnn/try-project-root (dir)
@@ -351,6 +357,11 @@
   :config
   (evil-escape-mode))
 
+(use-package evil-paredit
+  :after (evil paredit)
+  :ensure t
+  :hook (paredit-mode . evil-paredit-mode))
+
 (use-package evil-surround
   :ensure t
   :config
@@ -396,6 +407,20 @@
 (use-package clojure-mode :ensure t)
 
 (use-package fish-mode :ensure t)
+
+(use-package janet-mode
+  :straight (:host github :repo "alschwalm/janet-mode" :branch "master"))
+
+(use-package ijanet
+  :straight (:host github :repo "serialdev/ijanet-mode")
+  :after janet-mode
+  :bind
+  (:map janet-mode-map
+        ("C-c C-b" . ijanet-eval-buffer)
+        ("C-c C-e" . ijanet-eval-sexp-at-point)
+        ("C-c C-l" . ijanet-eval-line)
+        ("C-c C-p" . ijanet)
+        ("C-c C-r" . ijanet-eval-region)))
 
 (use-package markdown-mode
   :ensure t
