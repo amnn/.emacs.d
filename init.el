@@ -112,6 +112,7 @@
   :after (consult eglot)
   :bind
   (:map evil-normal-state-map
+        ("ge" . 'consult-flymake)
 	("gs" . 'consult-eglot-symbols)))
 
 (use-package corfu
@@ -365,8 +366,9 @@
   (:map evil-normal-state-map
 	("[g" . 'flymake-goto-prev-error)
 	("]g" . 'flymake-goto-next-error)
-	("ga" . 'eglot-code-actions)
-	("gx" . 'eglot-code-action-quickfix)
+        ("SPC a" . eglot-code-actions)
+        ("SPC q" . eglot-code-action-quickfix)
+        ("SPC r" . eglot-rename)
 	("gi" . 'eglot-find-implementation)
 	("gd" . 'xref-find-definitions)
 	("gD" . 'eglot-find-declaration)
@@ -380,7 +382,6 @@
     (push 'flymake-eldoc-function eldoc-documentation-functions))
 
   (add-hook 'eglot-managed-mode-hook 'amnn/eglot-prefer-flymake-eldoc))
-
 
 ;;; Debugging ============================================================== ;;;
 
