@@ -584,6 +584,13 @@
 
   (global-ligature-mode t))
 
+(use-package org-modern
+  :ensure t
+  :after org
+  :hook
+  (org-mode . org-modern-mode)
+  (org-agenda-finalize . org-modern-agenda))
+
 (use-package rainbow-delimiters
   :ensure t
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -647,14 +654,28 @@
        (amnn/push-kitty-theme "dark")))
 
     ;; Apply tweaks to faces in current theme, after it has loaded.
-    (set-face-attribute 'fringe nil :background (face-attribute 'default :background))
     (set-face-attribute 'font-lock-doc-face nil :extend t)
     (set-face-attribute 'font-lock-comment-face nil :extend t)
 
-    (custom-set-faces
-     `(window-divider ((t (:foreground ,(face-attribute 'default :background)))))
-     `(window-divider-first-pixel ((t (:inherit window-divider))))
-     `(window-divider-last-pixel  ((t (:inherit window-divider)))))
+    ;; Remove background from fringe, org-hide, and outline headers
+    ;; (mostly to make them play nice with org-modern), to make them
+    ;; blend in better.
+    (let ((background (face-attribute 'default :background)))
+      (set-face-attribute 'fringe    nil :background background)
+      (set-face-attribute 'org-hide  nil :background background)
+      (set-face-attribute 'outline-1 nil :background background)
+      (set-face-attribute 'outline-2 nil :background background)
+      (set-face-attribute 'outline-3 nil :background background)
+      (set-face-attribute 'outline-4 nil :background background)
+      (set-face-attribute 'outline-5 nil :background background)
+      (set-face-attribute 'outline-6 nil :background background)
+      (set-face-attribute 'outline-7 nil :background background)
+      (set-face-attribute 'outline-8 nil :background background)
+
+      (custom-set-faces
+       `(window-divider ((t (:foreground ,background))))
+       `(window-divider-first-pixel ((t (:inherit window-divider))))
+       `(window-divider-last-pixel  ((t (:inherit window-divider))))))
 
     (sml/setup))
 
