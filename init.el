@@ -4,7 +4,9 @@
 ;; contained within init.el.  This needs to go first because all other
 ;; packages are pulled in with straight.
 
-(setq straight-use-package-by-default t)
+(setq straight-use-package-by-default t
+      use-package-verbose nil
+      use-package-expand-minimally t)
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
