@@ -430,6 +430,65 @@
      ("WAIT" . (:foreground "black" :background "gold"))
      ("REVW" . (:foreground "black" :background "gold"))
      ("DROP" . (:foreground "white" :background "black")))))
+
+(use-package org-roam
+  :ensure t
+  :after org
+  :hook (org-mode . amnn/detect-agenda-before-save)
+  :bind
+  (:map evil-normal-state-map
+        ("SPC n l" . org-roam-buffer-toggle)
+        ("SPC n f" . org-roam-node-find)
+        ("SPC n g" . org-roam-graph)
+        ("SPC n i" . org-roam-node-insert)
+        ("SPC n c" . org-roam-capture)
+        ("SPC n j" . org-roam-dailies-capture-today)
+        ("SPC n J" . org-roam-dailies-capture-date)
+        ("SPC n n" . org-roam-dailies-goto-tomorrow)
+        ("SPC n p" . org-roam-dailies-goto-yesterday)
+        ("SPC n t" . org-roam-dailies-goto-today)
+        ("SPC n T" . org-roam-dailies-goto-date)
+        ("SPC n x" . org-roam-extract-subtree))
+  :init
+  (setq org-roam-v2-ack t)
+
+  :config
+  (org-roam-db-autosync-mode)
+
+  :custom
+  (org-roam-capture-templates
+   '(("d" "default" plain "%?"
+      :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                         "#+title: ${title}\n#+category: ${title}\n\n")
+      :unnarrowed t)))
+  (org-roam-dailies-capture-templates
+   '(("d" "default" entry "** %?"
+      :target (file+head+olp
+               "%<%Y W%W>.org"
+               "#+title: %<%Y W%W>\n#+category: %<%Y W%W>\n#+filetags: :journal:\n\n"
+               ("%<%a, %d %b>"))
+      :empty-lines 1
+      :unnarrowed t)))
+  (org-roam-dailies-directory "Journal/")
+  (org-roam-db-location "~/Roam.db")
+  (org-roam-directory "~/Roam")
+  (org-roam-node-display-template
+   (concat "${title:*}" (propertize "${tags:*}" 'face 'org-tag)))
+  (org-roam-mode-section-functions
+   (list #'org-roam-backlinks-section
+         #'org-roam-reflinks-section
+         #'org-roam-unlinked-references-section)))
+
+(use-package org-roam-ui
+  :straight (:host github
+             :repo "org-roam/org-roam-ui"
+             :branch "main"
+             :files ("*.el" "out"))
+  :after org-roam
+  :custom
+  (org-roam-sync-ui-theme t)
+  (org-roam-ui-follow t)
+  (org-roam-ui-update-on-save t))
 ;;; Language Server ======================================================== ;;;
 
 (use-package eglot
