@@ -566,7 +566,26 @@
                  (string-match-p (regexp-quote ":+agenda:")))))
          (mapcar #'car)))
 
+  (defun amnn/org-archive-subtree (org/archive-subtree &rest args)
+    "Override of `org-archive-subtree' that sets
+     `org-archive-location' to the current daily file+olp."
+    (let* ((daily-archive-file
+            (concat org-roam-directory "/"
+                    org-roam-dailies-directory "/"
+                    (format-time-string "%Y W%W.org")))
+           (org-archive-location
+            (concat daily-archive-file "::"
+                    (format-time-string "* %a, %d %b"))))
+      (unless (file-exists-p daily-archive-file)
+        (save-window-excursion
+          ;; HACK: This visits the buffer for today after it's created,
+          ;; which is not necessary, and we need `save-window-excursion'
+          ;; to undo that.
+          (org-roam-dailies-goto-today)))
+      (apply org/archive-subtree args)))
+
   (advice-add #'org-agenda-files :override #'amnn/org-roam-agenda-files)
+  (advice-add #'org-archive-subtree :around #'amnn/org-archive-subtree)
   (org-roam-db-autosync-mode)
 
   :custom
