@@ -431,6 +431,16 @@
      ("REVW" . (:foreground "black" :background "gold"))
      ("DROP" . (:foreground "white" :background "black")))))
 
+(use-package org-noter
+  :ensure t
+
+  :bind
+  (:map evil-normal-state-map
+        ("SPC n a" . org-noter))
+
+  :custom
+  (org-noter-prefer-root-as-file-level t))
+
 (use-package org-roam
   :ensure t
   :after org
@@ -489,6 +499,11 @@
   (org-roam-sync-ui-theme t)
   (org-roam-ui-follow t)
   (org-roam-ui-update-on-save t))
+(use-package pdf-tools
+  :ensure t
+  :config
+  (pdf-tools-install))
+
 ;;; Language Server ======================================================== ;;;
 
 (use-package eglot
