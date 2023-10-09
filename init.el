@@ -696,10 +696,17 @@
   (before-save . delete-trailing-whitespace)
 
   :custom
+  ;; Auto-save org mode files in-place
+  (auto-save-visited-interval 2)
+  (auto-save-visited-predicate
+   (lambda () (eq major-mode 'org-mode)))
   ;; Store backups centrally, not next to file.
   (backup-directory-alist '(("" . "~/.emacs.d/backup")))
   (indent-tabs-mode nil)
   (mac-option-modifier 'meta)
   (require-final-newline t)
   (scroll-margin 5)
-  (warning-suppress-log-types '((comp))))
+  (warning-suppress-log-types '((comp)))
+
+  :config
+  (auto-save-visited-mode))
