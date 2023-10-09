@@ -757,6 +757,7 @@
 
 (use-package move-mode
   :ensure t
+  :after eglot
   :hook   (move-mode . eglot-ensure)
 
   :config
