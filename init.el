@@ -377,16 +377,17 @@
 
   :bind
   (:map evil-normal-state-map
-	("[g" . 'flymake-goto-prev-error)
-	("]g" . 'flymake-goto-next-error)
         ("SPC a" . eglot-code-actions)
         ("SPC q" . eglot-code-action-quickfix)
         ("SPC r" . eglot-rename)
-	("gi" . 'eglot-find-implementation)
-	("gd" . 'xref-find-definitions)
-	("gD" . 'eglot-find-declaration)
-	("gr" . 'xref-find-references)
-	("gy" . 'eglot-find-typeDefinition))
+	("[g" . flymake-goto-prev-error)
+	("]g" . flymake-goto-next-error)
+        ("gE" . flymake-show-project-diagnostics)
+	("gi" . eglot-find-implementation)
+	("gd" . xref-find-definitions)
+	("gD" . eglot-find-declaration)
+	("gr" . xref-find-references)
+	("gy" . eglot-find-typeDefinition))
 
   :init
   (defun amnn/eglot-prefer-flymake-eldoc ()
