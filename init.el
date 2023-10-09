@@ -482,6 +482,9 @@
   (cl-defmethod project-root ((project (head tsconfig.json)))
     (cdr project)))
 
+(use-package wgsl-mode
+  :ensure t)
+
 (use-package yaml-mode
   :ensure t)
 
