@@ -463,6 +463,110 @@
   (setq org-roam-v2-ack t)
 
   :config
+  (defun amnn/detect-agenda-before-save ()
+    "Add agenda detection as a `before-save-hook'"
+    (add-hook 'before-save-hook #'amnn/org-roam-detect-for-agenda +1 t)
+    (add-hook 'before-save-hook #'amnn/org-roam-detect-stuck      +1 t))
+
+  (defun amnn/org-roam-detect-for-agenda ()
+    "Detect whether the current `org-roam' file should be part of
+     `org-agenda-files' (i.e. it contains incomplete tasks).  If so, add
+     `+agenda' as a tag, and remove it otherwise."
+    (save-excursion
+      (goto-char (point-min))
+      (when-let* ((node (org-roam-node-at-point))
+
+                  (dailies-d
+                   (concat org-roam-directory "/"
+                           org-roam-dailies-directory))
+
+                  (task-keyword-re
+                   (if (file-in-directory-p buffer-file-name dailies-d)
+                       org-not-done-regexp org-todo-regexp))
+
+                  (task-re
+                   (concat "^" org-outline-regexp
+                           " *\\<" task-keyword-re
+                           "\\>")))
+        (cond
+         ;; Skip files with the `-agenda' tag, cleaning up `+agenda'.
+         ((member "-agenda" (org-roam-node-tags node))
+          (org-roam-tag-remove ("+agenda")))
+
+         ;; Add `+agenda' tag if a relevant task is detected
+         ((let ((case-fold-search nil))
+            (search-forward-regexp task-re nil t))
+          (goto-char (point-min))
+          (org-roam-tag-add '("+agenda")))
+
+         ;; Remove it otherwise
+         (t (goto-char (point-min))
+            (org-roam-tag-remove '("+agenda")))))))
+
+  (defun amnn/org-roam-detect-stuck ()
+    "Detect whether the current `org-roam' file should be considered a
+     stuck project.  A file is considered a stuck project if it
+     is a non-dailies file, part of the agenda (as per
+     `amnn/org-roam-detect-for-agenda') but it has no `NEXT',
+     `WORK' `WAIT', `REVW', `+SCHEDULED' or `+DEADLINED' tasks."
+    (interactive)
+    (save-excursion
+      (goto-char (point-min))
+      (when-let* ((node (org-roam-node-at-point))
+
+                  (dailies-d
+                   (concat org-roam-directory "/"
+                           org-roam-dailies-directory))
+
+                  (pending-re
+                   (concat "^" org-outline-regexp
+                           " *\\<\\(NEXT\\|WORK\\|WAIT\\|REVW\\)\\>"))
+
+                  (todo-re
+                   (concat "^" org-outline-regexp
+                           " *\\<TODO\\>")))
+        (cond
+         ;; Can't be stuck if it's not in the agenda
+         ((not (member "+agenda" (org-roam-node-tags node)))
+          (org-roam-tag-remove '("+stuck")))
+
+         ;; Daily files are not projects
+         ((file-in-directory-p buffer-file-name dailies-d)
+          (org-roam-tag-remove '("+stuck")))
+
+         ;; Projects with a pending (NEXT, WORK, WAIT, REVW) task are not stuck
+         ((let ((case-fold-search nil))
+            (search-forward-regexp pending-re nil t))
+          (goto-char (point-min))
+          (org-roam-tag-remove '("+stuck")))
+
+         ;; Projects with a SCHEDULED or DEADLINED TODO are not stuck
+         ((cl-loop initially (goto-char (point-min))
+                   while     (search-forward-regexp todo-re nil t)
+                   thereis   (or (org-entry-get nil "SCHEDULED")
+                                 (org-entry-get nil "DEADLINE")))
+          (org-roam-tag-remove '("+stuck")))
+
+         ;; Anything else must be a stuck project
+         (t (goto-char (point-min))
+            (org-roam-tag-add '("+stuck")))))))
+
+  (defun amnn/org-roam-agenda-files (&optional unrestricted archives)
+    "Override for `org-agenda-files' based on `org-roam' files that are tagged
+     with `+agenda'."
+    (->> (org-roam-db-query
+          [:select [file properties] :from nodes
+                   :where      (like properties '"%:+agenda:%")
+                   :and   (not (like properties '"%:-agenda:%"))])
+         (seq-filter
+          (lambda (record)
+            (->> (cadr record)
+                 (assoc-string "ALLTAGS")
+                 cdr org-no-properties
+                 (string-match-p (regexp-quote ":+agenda:")))))
+         (mapcar #'car)))
+
+  (advice-add #'org-agenda-files :override #'amnn/org-roam-agenda-files)
   (org-roam-db-autosync-mode)
 
   :custom
@@ -499,6 +603,62 @@
   (org-roam-sync-ui-theme t)
   (org-roam-ui-follow t)
   (org-roam-ui-update-on-save t))
+
+(use-package org-super-agenda
+  :ensure t
+  :hook (org-agenda-mode . org-super-agenda-mode)
+  :bind
+  (:map evil-normal-state-map
+        ("SPC t" . amnn/agenda))
+  :custom
+  (org-agenda-show-future-repeats 'next)
+  (org-agenda-custom-commands
+   '(("x" "Dashboard"
+      ((tags-todo "/!"
+                  ((org-agenda-overriding-header "")
+                   (org-super-agenda-groups
+                    '((:name "Oncall"
+                             :and (:tag "oncall"
+                                   :not (:scheduled future)))
+                      (:name "Work"    :todo "WORK")
+                      (:name "Inbox"   :file-path "Roam/Journal")
+                      (:discard (:anything t))))))
+
+       (agenda ""
+               ((org-agenda-entry-types
+                 '(:deadline :scheduled :timestamp :sexp))
+                (org-agenda-filter "-SCHEDULED>=\"<+7d>\"/!")
+                (org-agenda-overriding-header "")
+                (org-agenda-skip-scheduled-delay-if-deadline t)
+                (org-agenda-skip-scheduled-if-deadline-is-shown t)
+                (org-agenda-skip-scheduled-if-done t)
+                (org-agenda-span 7)
+                (org-agenda-start-on-weekday nil)
+                (org-deadline-warning-days 0)
+
+                (org-habit-following-days 7)
+                (org-habit-preceding-days 35)
+                (org-habit-show-habits t)
+                (org-habit-show-all-today t)
+                (org-habit-show-habits-only-for-today t)
+
+                (org-super-agenda-groups
+                 '((:discard (:and (:scheduled future
+                                    :habit t)))
+                   (:discard (:todo ("DONE" "DROP")))
+                   (:anything t :name nil)))))
+
+       (tags-todo "-SCHEDULED={.+}-DEADLINE<=\"<+7d>\"/NEXT"
+                  ((org-agenda-overriding-header "Next")))))))
+
+  (org-agenda-hide-tags-regexp
+   "[+-]agenda")
+
+  :config
+  (defun amnn/agenda ()
+    (interactive)
+    (org-agenda nil "x")))
+
 (use-package pdf-tools
   :ensure t
   :config
