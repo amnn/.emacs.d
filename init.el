@@ -414,6 +414,9 @@
 (use-package graphql-mode
   :ensure t)
 
+(use-package haskell-mode
+  :ensure t)
+
 (use-package janet-mode
   :straight (:host github :repo "alschwalm/janet-mode" :branch "master"))
 
