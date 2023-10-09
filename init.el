@@ -510,7 +510,7 @@
    ("C-x C-g" . magit-status)))
 
 (use-package git-link
-  :straight (:host github :repo "sshaw/git-link" :branch "f5691f8") ;; v0.8.6
+  :straight (:host github :repo "sshaw/git-link" :tag "v0.8.6")
   :bind
   (:map evil-normal-state-map
         ("gh" . git-link)
