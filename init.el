@@ -369,6 +369,67 @@
   :config
   (global-evil-surround-mode 1))
 
+;;; Org Mode =============================================================== ;;;
+
+(use-package org-contrib
+  :ensure t
+  :after org
+  :init
+  (add-to-list 'org-modules 'org-checklist))
+
+(use-package org-modern
+  :ensure t
+  :after org
+  :hook
+  (org-mode . auto-fill-mode)
+  (org-mode . org-modern-mode)
+  (org-agenda-finalize . org-modern-agenda)
+
+  :preface
+  (defun amnn/open-slack (team _)
+    (browse-url (concat "slack://channel?team=" team)))
+
+  (defun amnn/open-sui-pr (pr _)
+    (browse-url (concat "https://github.com/MystenLabs/sui/pull/" pr)))
+
+  :config
+  (org-link-set-parameters "slack" :follow #'amnn/open-slack)
+  (org-link-set-parameters "sui" :follow #'amnn/open-sui-pr)
+  (add-to-list 'org-export-backends 'md)
+
+  :bind
+  (:map evil-normal-state-map
+        ("SPC N e" . org-narrow-to-element))
+
+  :custom
+  (org-adapt-indentation t)
+  (org-agenda-sticky t)
+  (org-agenda-tags-column 0)
+  (org-agenda-prefix-format
+   '((agenda . "  %-16.16 c%?-12t% s")
+     (todo   . "  %-16.16 c ")
+     (tags   . "  %-16.16 c ")))
+  (org-auto-align-tags nil)
+  (org-cycle-separator-lines 1)
+  (org-latex-create-formula-image-program 'dvisvgm)
+  (org-log-into-drawer t)
+  (org-refile-targets
+   '((org-agenda-files . (:maxlevel . 3))))
+  (org-startup-folded t)
+  (org-startup-truncated nil)
+  (org-tags-column 0)
+  (org-tags-sort-function 'org-string-collate-lessp)
+  (org-todo-keywords
+   '((sequence "TODO(t)" "NEXT(n)" "WORK(k)"
+               "WAIT(w)" "REVW(r)" "|"
+               "DONE(d)" "DROP(x)")))
+  (org-use-fast-todo-selection 'expert)
+  (org-modern-todo-faces
+   '(("NEXT" . (:foreground "black" :background "lime green"))
+     ("WORK" . (:foreground "white" :background "deep sky blue"))
+     ("WAIT" . (:foreground "black" :background "gold"))
+     ("REVW" . (:foreground "black" :background "gold"))
+     ("DROP" . (:foreground "white" :background "black")))))
 ;;; Language Server ======================================================== ;;;
 
 (use-package eglot
@@ -601,13 +662,6 @@
      ("=" "=+")))
 
   (global-ligature-mode t))
-
-(use-package org-modern
-  :ensure t
-  :after org
-  :hook
-  (org-mode . org-modern-mode)
-  (org-agenda-finalize . org-modern-agenda))
 
 (use-package rainbow-delimiters
   :ensure t
