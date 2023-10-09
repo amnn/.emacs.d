@@ -300,7 +300,7 @@
   (whitespace-style '(face lines-tail))
 
   :custom-face
-  (whitespace-line ((t (:inherit error :foreground nil :background nil)))))
+  (whitespace-line ((t (:inherit error :foreground unspecified :background unspecified)))))
 
 ;;; Vim Emulation =========================================================  ;;;
 
@@ -493,13 +493,10 @@
    ("]h" . 'git-gutter:next-hunk)
    ("[h" . 'git-gutter:previous-hunk))
   :config
-  (set-face-foreground  'git-gutter-fr:added "lime green")
   (define-fringe-bitmap 'git-gutter-fr:added
     [224] nil nil '(center repeated))
-  (set-face-foreground  'git-gutter-fr:modified "orange")
   (define-fringe-bitmap 'git-gutter-fr:modified
     [224] nil nil '(center repeated))
-  (set-face-foreground  'git-gutter-fr:deleted "firebrick")
   (define-fringe-bitmap 'git-gutter-fr:deleted
     [128 192 224 240] nil nil 'bottom))
 
@@ -602,12 +599,23 @@
   (sml/no-confirm-load-theme t)
   (sml/theme 'respectful))
 
-(use-package twilight-anti-bright-theme :ensure t :defer t)
-(use-package twilight-bright-theme      :ensure t :defer t)
+(use-package modus-themes
+  :ensure t
+  :config
+  ;; Add all your customizations prior to loading the themes
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs   t
+        modus-themes-common-palette-overrides
+        '((fringe                    unspecified)
+          (border-mode-line-active   bg-mode-line-active)
+          (border-mode-line-inactive bg-mode-line-inactive))
+
+        modus-themes-headings
+        '((0 . (1.62)))))
 
 (use-package theming
   :straight nil :demand t :no-require t
-  :after (exec-path-from-shell twilight-anti-bright-theme twilight-bright-theme)
+  :after (exec-path-from-shell modus-themes)
 
   :custom
   (use-file-dialog nil)
@@ -616,6 +624,8 @@
   (default-frame-alist
     '((internal-border-width . 24)
       (right-fringe . 0)))
+
+  (bookmark-set-fringe-mark nil)
 
   (window-divider-default-right-width 24)
   (window-divider-default-places 'right-only)
@@ -641,46 +651,33 @@
     (call-process "/Applications/kitty.app/Contents/MacOS/kitty" nil nil nil
 		  "@" "--to" "unix:/tmp/kitty-pipe"
                   "set-colors" "--all" "--configured"
-                  (concat "~/.config/kitty/ayu-" light-or-dark ".conf")))
+                  (concat "~/.config/kitty/ayu-" (symbol-name light-or-dark) ".conf")))
 
-  (defun amnn/load-theme-matching-system ()
+  (defun amnn/load-theme-matching-system (light-or-dark)
     "Pick which theme to run based on whether the system is light or dark."
-    (pcase (plist-get (mac-application-state) :appearance)
-      ("NSAppearanceNameAqua"
-       (load-theme 'twilight-bright t)
-       (amnn/push-kitty-theme "light"))
-      ("NSAppearanceNameDarkAqua"
-       (load-theme 'twilight-anti-bright t)
-       (amnn/push-kitty-theme "dark")))
+    (pcase light-or-dark
+      ('light (load-theme 'modus-operandi t))
+      ('dark  (load-theme 'modus-vivendi  t)))
 
-    ;; Apply tweaks to faces in current theme, after it has loaded.
-    (set-face-attribute 'font-lock-doc-face nil :extend t)
-    (set-face-attribute 'font-lock-comment-face nil :extend t)
+    (amnn/push-kitty-theme light-or-dark)
 
-    ;; Remove background from fringe, org-hide, and outline headers
-    ;; (mostly to make them play nice with org-modern), to make them
-    ;; blend in better.
     (let ((background (face-attribute 'default :background)))
-      (set-face-attribute 'fringe    nil :background background)
-      (set-face-attribute 'org-hide  nil :background background)
-      (set-face-attribute 'outline-1 nil :background background)
-      (set-face-attribute 'outline-2 nil :background background)
-      (set-face-attribute 'outline-3 nil :background background)
-      (set-face-attribute 'outline-4 nil :background background)
-      (set-face-attribute 'outline-5 nil :background background)
-      (set-face-attribute 'outline-6 nil :background background)
-      (set-face-attribute 'outline-7 nil :background background)
-      (set-face-attribute 'outline-8 nil :background background)
-
       (custom-set-faces
-       `(window-divider ((t (:foreground ,background))))
-       `(window-divider-first-pixel ((t (:inherit window-divider))))
-       `(window-divider-last-pixel  ((t (:inherit window-divider))))))
+       `(git-gutter-fr:added        ((t :background ,background
+                                        :foreground "lime green")))
+       `(git-gutter-fr:modified     ((t :background ,background
+                                        :foreground "orange")))
+       `(git-gutter-fr:deleted      ((t :background ,background
+                                        :foreground "firebrick")))
+       `(header-line                ((t :background ,background
+                                        :slant       italic)))
+       `(window-divider             ((t :foreground ,background)))
+       `(window-divider-first-pixel ((t :foreground ,background)))
+       `(window-divider-last-pixel  ((t :foreground ,background)))))
 
     (sml/setup))
 
-  (amnn/load-theme-matching-system)
-  (add-hook 'mac-effective-appearance-change-hook
+  (add-hook 'ns-system-appearance-change-functions
             #'amnn/load-theme-matching-system))
 
 ;;; Misc. ================================================================== ;;;
