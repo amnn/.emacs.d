@@ -693,7 +693,7 @@
 
 (use-package emacs
   :hook
-  (before-save-hook . delete-trailing-whitespace)
+  (before-save . delete-trailing-whitespace)
 
   :custom
   ;; Store backups centrally, not next to file.
