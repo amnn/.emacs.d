@@ -397,6 +397,15 @@
   (defun amnn/open-sui-pr (pr _)
     (browse-url (concat "https://github.com/MystenLabs/sui/pull/" pr)))
 
+  (defun amnn/org-evil-ret (&optional arg)
+    "Try to open the link at point, and if not, behave like RET in evil mode."
+    (interactive "P")
+    (cond
+     ((eq 'org-mode major-mode)
+      (condition-case nil (org-open-at-point arg)
+        (user-error (evil-ret))))
+     (t (evil-ret))))
+
   :config
   (org-link-set-parameters "slack" :follow #'amnn/open-slack)
   (org-link-set-parameters "sui" :follow #'amnn/open-sui-pr)
@@ -405,6 +414,11 @@
   :bind
   (:map evil-normal-state-map
         ("SPC N e" . org-narrow-to-element))
+
+  (:map evil-motion-state-map
+        ("]a" . org-next-link)
+        ("[a" . org-previous-link)
+        ("<return>" . amnn/org-evil-ret))
 
   :custom
   (org-adapt-indentation t)
@@ -699,14 +713,16 @@
         ("SPC a" . eglot-code-actions)
         ("SPC q" . eglot-code-action-quickfix)
         ("SPC r" . eglot-rename)
-	("[g" . flymake-goto-prev-error)
-	("]g" . flymake-goto-next-error)
         ("gE" . flymake-show-project-diagnostics)
 	("gi" . eglot-find-implementation)
 	("gd" . xref-find-definitions)
 	("gD" . eglot-find-declaration)
 	("gr" . xref-find-references)
 	("gy" . eglot-find-typeDefinition))
+
+  (:map evil-motion-state-map
+	("[g" . flymake-goto-prev-error)
+	("]g" . flymake-goto-next-error))
 
   :init
   (defun amnn/eglot-prefer-flymake-eldoc ()
@@ -831,8 +847,9 @@
   :hook (prog-mode . git-gutter-mode)
   :bind
   (:map evil-motion-state-map
-   ("]h" . 'git-gutter:next-hunk)
-   ("[h" . 'git-gutter:previous-hunk))
+        ("]h" . git-gutter:next-hunk)
+        ("[h" . git-gutter:previous-hunk))
+
   :config
   (define-fringe-bitmap 'git-gutter-fr:added
     [224] nil nil '(center repeated))
