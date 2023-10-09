@@ -462,6 +462,9 @@
     (setq-local whitespace-line-column 100))
   (add-hook 'rust-mode-hook #'amnn/widen-fill))
 
+(use-package ron-mode
+  :ensure t)
+
 (use-package typescript-mode
   :ensure t
   :hook   (typescript-mode . eglot-ensure)
