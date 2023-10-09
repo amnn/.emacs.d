@@ -395,7 +395,13 @@
      documentations."
     (push 'flymake-eldoc-function eldoc-documentation-functions))
 
-  (add-hook 'eglot-managed-mode-hook 'amnn/eglot-prefer-flymake-eldoc))
+  (defun amnn/disable-inlay-hints ()
+    "Turn off inlay hints -- they make lines extra long, and the information is
+     available contextually."
+    (eglot-inlay-hints-mode -1))
+
+  (add-hook 'eglot-managed-mode-hook #'amnn/eglot-prefer-flymake-eldoc)
+  (add-hook 'eglot-managed-mode-hook #'amnn/disable-inlay-hints))
 
 ;;; Debugging ============================================================== ;;;
 
