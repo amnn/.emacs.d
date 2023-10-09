@@ -79,6 +79,11 @@
 
 (use-package posframe :ensure t)
 
+(use-package breadcrumb
+  :straight (:host github :repo "joaotavora/breadcrumb")
+  :init
+  (breadcrumb-mode))
+
 ;;; Minibuffer and Completion Frameworks =================================== ;;;
 
 (use-package consult
