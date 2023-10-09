@@ -6,6 +6,7 @@ eln-cache/*
 elpa/*
 eshell/*
 history
+.org-id-locations
 projects
 recentf
 recentf~
