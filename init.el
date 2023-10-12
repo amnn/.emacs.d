@@ -88,6 +88,11 @@
 
 (use-package consult
   :ensure t
+
+  :autoload
+  (consult--jump-preview
+   consult--read)
+
   :bind
   (("C-x b"   . consult-buffer)
    ("C-x 4 b" . consult-buffer-other-window)
@@ -119,6 +124,11 @@
   (:map evil-normal-state-map
         ("ge" . 'consult-flymake)
 	("gs" . 'consult-eglot-symbols)))
+
+(use-package consult-org
+  :straight nil
+  :autoload
+  (consult-org--headings))
 
 (use-package corfu
   :ensure t
@@ -401,7 +411,7 @@
     "Try to open the link at point, and if not, behave like RET in evil mode."
     (interactive "P")
     (cond
-     ((eq 'org-mode major-mode)
+     ((derived-mode-p 'org-mode)
       (condition-case nil (org-open-at-point arg)
         (user-error (evil-ret))))
      (t (evil-ret))))
@@ -432,8 +442,10 @@
   (org-cycle-separator-lines 1)
   (org-latex-create-formula-image-program 'dvisvgm)
   (org-log-into-drawer t)
+  (org-outline-path-complete-in-steps nil)
   (org-refile-targets
    '((org-agenda-files . (:maxlevel . 3))))
+  (org-refile-use-outline-path 'file)
   (org-startup-folded t)
   (org-startup-truncated nil)
   (org-tags-column 0)
@@ -464,6 +476,7 @@
   :ensure t
   :after org
   :hook (org-mode . amnn/detect-agenda-before-save)
+
   :bind
   (:map evil-normal-state-map
         ("SPC n l" . org-roam-buffer-toggle)
@@ -477,7 +490,9 @@
         ("SPC n p" . org-roam-dailies-goto-yesterday)
         ("SPC n t" . org-roam-dailies-goto-today)
         ("SPC n T" . org-roam-dailies-goto-date)
-        ("SPC n x" . org-roam-extract-subtree))
+        ("SPC n x" . org-roam-extract-subtree)
+        ("SPC n $" . amnn/consult-org-refile))
+
   :init
   (setq org-roam-v2-ack t)
 
@@ -602,6 +617,60 @@
           ;; to undo that.
           (org-roam-dailies-goto-today)))
       (apply org/archive-subtree args)))
+
+  (defun amnn/consult-org-refile (&optional arg)
+    "Pick a target to refile to using a two-level system: First pick the file
+     using `org-roam-node-read' and then pick a heading in there using
+     `consult-org-heading'."
+    (interactive "P")
+
+    (unless (derived-mode-p 'org-mode)
+      (user-error "Must be called from an Org buffer"))
+
+    (let* ((node (org-roam-node-read nil nil nil t "Refile: "))
+           (file (org-roam-node-file node))
+
+           (top-level-marker
+            (with-current-buffer (org-find-base-buffer-visiting file)
+              (point-min-marker)))
+
+           (top-level-candidate "[top-level]")
+
+           (lookup
+            (lambda (selected candidates &rest _)
+              (list selected (consult--lookup-prop 'org-marker
+                                                   selected
+                                                   candidates))))
+           (return
+            (lambda (cand)
+              (let* ((pos (marker-position (cadr cand)))
+                     (loc (list (car cand) file nil pos)))
+                (org-refile arg nil loc))))
+           (state* (consult--jump-preview))
+           (state
+            (lambda (action cand)
+              (funcall state* action (cadr cand)))))
+
+      ;; Annotate the special top-level candidate.
+      (add-text-properties 0 1
+       `(org-marker ,top-level-marker
+         consult-org--heading (0 nil))
+       top-level-candidate)
+
+      ;; Save excursion to avoid changing the buffer to `node'.
+      (save-excursion
+        (consult--read
+         (consult--slow-operation "Collecting headings..."
+           (cons top-level-candidate
+                 (consult-org--headings nil nil (list file))))
+         :prompt "Refile to heading: "
+         :category 'consult-org-heading
+         :sort nil
+         :require-match t
+         :history '(:input consult-org--history)
+         :narrow (consult-org--narrow)
+         :state (consult--state-with-return state return)
+         :lookup lookup))))
 
   (advice-add #'org-agenda-files :override #'amnn/org-roam-agenda-files)
   (advice-add #'org-archive-subtree :around #'amnn/org-archive-subtree)
@@ -1047,7 +1116,7 @@
   ;; Auto-save org mode files in-place
   (auto-save-visited-interval 2)
   (auto-save-visited-predicate
-   (lambda () (eq major-mode 'org-mode)))
+   (lambda () (derived-mode-p 'org-mode)))
   ;; Store backups centrally, not next to file.
   (backup-directory-alist '(("" . "~/.emacs.d/backup")))
   (indent-tabs-mode nil)
