@@ -32,8 +32,6 @@
 (use-package ace-window
   :ensure t
   :after posframe
-  :bind
-  ("M-o" . 'ace-window)
 
   :custom
   (aw-dispatch-always t)
@@ -119,7 +117,8 @@
 
 (use-package consult-eglot
   :ensure t
-  :after (consult eglot)
+  :after evil
+
   :bind
   (:map evil-normal-state-map
         ("ge" . 'consult-flymake)
@@ -199,7 +198,6 @@
 (use-package embark-consult
   :ensure t
   :demand t
-  :after (embark consult)
   :hook  (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package marginalia
@@ -281,7 +279,6 @@
 
 (use-package dired
   :straight (:type built-in)
-  :after evil-collection
   :commands (dired dired-jump)
   :custom
   (dired-dwim-target t)
@@ -353,8 +350,9 @@
   (unbind-key "C-." evil-normal-state-map))
 
 (use-package evil-collection
-  :after evil
   :ensure t
+  :autoload
+  (evil-collection-define-key)
   :custom
   (evil-want-integration t)
   :config
@@ -367,7 +365,6 @@
   (define-key evil-normal-state-map (kbd "SPC SPC") evilem-map))
 
 (use-package evil-escape
-  :after evil
   :ensure t
   :custom
   (evil-escape-key-sequence "jk")
@@ -375,7 +372,6 @@
   (evil-escape-mode))
 
 (use-package evil-paredit
-  :after (evil paredit)
   :ensure t
   :hook (paredit-mode . evil-paredit-mode))
 
@@ -394,7 +390,6 @@
 
 (use-package org-modern
   :ensure t
-  :after org
   :hook
   (org-mode . auto-fill-mode)
   (org-mode . org-modern-mode)
@@ -474,8 +469,10 @@
 
 (use-package org-roam
   :ensure t
-  :after org
   :hook (org-mode . amnn/detect-agenda-before-save)
+
+  :autoload
+  (amnn/org-roam-agenda-files)
 
   :bind
   (:map evil-normal-state-map
@@ -495,6 +492,10 @@
 
   :init
   (setq org-roam-v2-ack t)
+
+  :preface
+  (advice-add #'org-agenda-files :override #'amnn/org-roam-agenda-files)
+  (advice-add #'org-archive-subtree :around #'amnn/org-archive-subtree)
 
   :config
   (defun amnn/detect-agenda-before-save ()
@@ -672,8 +673,6 @@
          :state (consult--state-with-return state return)
          :lookup lookup))))
 
-  (advice-add #'org-agenda-files :override #'amnn/org-roam-agenda-files)
-  (advice-add #'org-archive-subtree :around #'amnn/org-archive-subtree)
   (org-roam-db-autosync-mode)
 
   :custom
@@ -705,7 +704,6 @@
              :repo "org-roam/org-roam-ui"
              :branch "main"
              :files ("*.el" "out"))
-  :after org-roam
   :custom
   (org-roam-sync-ui-theme t)
   (org-roam-ui-follow t)
@@ -777,6 +775,9 @@
   :ensure t
   :after evil
 
+  :autoload
+  (eglot-ensure)
+
   :bind
   (:map evil-normal-state-map
         ("SPC a" . eglot-code-actions)
@@ -847,7 +848,6 @@
 
 (use-package move-mode
   :ensure t
-  :after eglot
   :hook   (move-mode . eglot-ensure)
 
   :config
