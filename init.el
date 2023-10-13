@@ -411,6 +411,45 @@
         (user-error (evil-ret))))
      (t (evil-ret))))
 
+  (defun amnn/org-insert-before (arg)
+    (interactive "P")
+    (if-let (pos (org-in-item-p))
+        (progn
+          (goto-char pos)
+          (let ((indent (current-indentation))
+                (check? (org-at-item-checkbox-p)))
+            (insert (make-string indent ?\s))
+            (insert "- ")
+            (when check? (insert "[ ] "))
+            (insert "\n")
+            (backward-char)))
+      (progn
+        (org-back-to-heading)
+        (if (org-entry-get (point) "TODO")
+            (org-insert-todo-heading arg)
+          (org-insert-heading arg))))
+    (evil-insert 1))
+
+  (defun amnn/org-insert-after (arg)
+    (interactive "P")
+    (if-let (pos (org-in-item-p))
+        (progn
+          (goto-char pos)
+          (let ((indent (current-indentation))
+                (check? (org-at-item-checkbox-p)))
+            (org-end-of-item)
+            (insert (make-string indent ?\s)) ;; Indentation
+            (insert "- ")                     ;; Bullet
+            (when check? (insert "[ ] "))     ;; Checkbox
+            (insert "\n")
+            (backward-char 1)))
+      (progn
+        (org-back-to-heading)
+        (if (org-entry-get (point) "TODO")
+            (org-insert-todo-heading-respect-content arg)
+          (org-insert-heading-respect-content))))
+    (evil-insert 1))
+
   :config
   (org-link-set-parameters "slack" :follow #'amnn/open-slack)
   (org-link-set-parameters "sui" :follow #'amnn/open-sui-pr)
@@ -418,7 +457,10 @@
 
   :bind
   (:map evil-normal-state-map
-        ("SPC N e" . org-narrow-to-element))
+        ("SPC N e" . org-narrow-to-element)
+        ("SPC n $" . org-archive-subtree)
+        (", o" . amnn/org-insert-after)
+        (", O" . amnn/org-insert-before))
 
   (:map evil-motion-state-map
         ("]a" . org-next-link)
@@ -485,10 +527,10 @@
         ("SPC n J" . org-roam-dailies-capture-date)
         ("SPC n n" . org-roam-dailies-goto-tomorrow)
         ("SPC n p" . org-roam-dailies-goto-yesterday)
+        ("SPC n r" . amnn/consult-org-refile)
         ("SPC n t" . org-roam-dailies-goto-today)
         ("SPC n T" . org-roam-dailies-goto-date)
-        ("SPC n x" . org-roam-extract-subtree)
-        ("SPC n $" . amnn/consult-org-refile))
+        ("SPC n x" . org-roam-extract-subtree))
 
   :init
   (setq org-roam-v2-ack t)
