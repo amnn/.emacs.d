@@ -457,6 +457,22 @@
           (org-insert-heading-respect-content))))
     (evil-insert 1))
 
+   (defun amnn/consult-org-blocked ()
+     (interactive)
+     (consult-org-heading "-reviews/WAIT|REVW" (org-agenda-files)))
+
+  (defun amnn/consult-org-done ()
+    (interactive)
+    (consult-org-heading "-journal/DONE|DROP" (org-agenda-files)))
+
+  (defun amnn/consult-org-next ()
+    (interactive)
+    (consult-org-heading "/NEXT" (org-agenda-files)))
+
+  (defun amnn/consult-org-working ()
+    (interactive)
+    (consult-org-heading "/WORK" (org-agenda-files)))
+
   :config
   (org-link-set-parameters "slack" :follow #'amnn/open-slack)
   (org-link-set-parameters "sui" :follow #'amnn/open-sui-pr)
@@ -468,13 +484,17 @@
         ("SPC n $" . org-archive-subtree)
         ("SPC t"   . org-todo)
         (", !"     . org-priority)
+        (", B"     . amnn/consult-org-blocked)
+        (", d"     . org-deadline)
+        (", D"     . amnn/consult-org-done)
         (", j"     . org-priority-down)
         (", k"     . org-priority-up)
-        (", d"     . org-deadline)
+        (", N"     . amnn/consult-org-next)
+        (", o"     . amnn/org-insert-after)
+        (", O"     . amnn/org-insert-before)
         (", s"     . org-schedule)
         (", t"     . org-set-tags-command)
-        (", o"     . amnn/org-insert-after)
-        (", O"     . amnn/org-insert-before))
+        (", W"     . amnn/consult-org-working))
 
   (:map evil-motion-state-map
         ("]a" . org-next-link)
@@ -698,11 +718,13 @@
               (list selected (consult--lookup-prop 'org-marker
                                                    selected
                                                    candidates))))
+
            (return
             (lambda (cand)
               (let* ((pos (marker-position (cadr cand)))
                      (loc (list (car cand) file nil pos)))
                 (org-refile arg nil loc))))
+
            (state* (consult--jump-preview))
            (state
             (lambda (action cand)
