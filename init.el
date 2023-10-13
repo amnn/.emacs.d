@@ -371,6 +371,13 @@
   :config
   (evil-escape-mode))
 
+(use-package evil-org
+  :ensure t
+  :after org
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
+
 (use-package evil-paredit
   :ensure t
   :hook (paredit-mode . evil-paredit-mode))
@@ -760,6 +767,9 @@
         ("SPC t" . amnn/agenda))
   (:map org-agenda-mode-map
         ("<mouse-1>" . org-agenda-goto))
+  ;; Overrides super-agenda's binding to goto-date
+  (:map org-super-agenda-header-map
+        ("j" . org-agenda-next-line))
 
   :custom
   (org-agenda-show-future-repeats 'next)
