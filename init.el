@@ -794,8 +794,6 @@
   :bind
   (:map evil-normal-state-map
         ("SPC T" . amnn/agenda))
-  (:map org-agenda-mode-map
-        ("<mouse-1>" . org-agenda-goto))
   ;; Overrides super-agenda's binding to goto-date
   (:map org-super-agenda-header-map
         ("j" . org-agenda-next-line))
