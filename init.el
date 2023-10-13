@@ -466,8 +466,15 @@
   (:map evil-normal-state-map
         ("SPC N e" . org-narrow-to-element)
         ("SPC n $" . org-archive-subtree)
-        (", o" . amnn/org-insert-after)
-        (", O" . amnn/org-insert-before))
+        ("SPC t"   . org-todo)
+        (", !"     . org-priority)
+        (", j"     . org-priority-down)
+        (", k"     . org-priority-up)
+        (", d"     . org-deadline)
+        (", s"     . org-schedule)
+        (", t"     . org-set-tags-command)
+        (", o"     . amnn/org-insert-after)
+        (", O"     . amnn/org-insert-before))
 
   (:map evil-motion-state-map
         ("]a" . org-next-link)
@@ -764,7 +771,7 @@
 
   :bind
   (:map evil-normal-state-map
-        ("SPC t" . amnn/agenda))
+        ("SPC T" . amnn/agenda))
   (:map org-agenda-mode-map
         ("<mouse-1>" . org-agenda-goto))
   ;; Overrides super-agenda's binding to goto-date
