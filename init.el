@@ -754,9 +754,13 @@
 (use-package org-super-agenda
   :ensure t
   :hook (org-agenda-mode . org-super-agenda-mode)
+
   :bind
   (:map evil-normal-state-map
         ("SPC t" . amnn/agenda))
+  (:map org-agenda-mode-map
+        ("<mouse-1>" . org-agenda-goto))
+
   :custom
   (org-agenda-show-future-repeats 'next)
   (org-agenda-custom-commands
