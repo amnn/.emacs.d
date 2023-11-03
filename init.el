@@ -482,7 +482,6 @@
   (:map evil-normal-state-map
         ("SPC N e" . org-narrow-to-element)
         ("SPC n $" . org-archive-subtree)
-        ("SPC t"   . org-todo)
         (", !"     . org-priority)
         (", B"     . amnn/consult-org-blocked)
         (", d"     . org-deadline)
@@ -493,7 +492,8 @@
         (", o"     . amnn/org-insert-after)
         (", O"     . amnn/org-insert-before)
         (", s"     . org-schedule)
-        (", t"     . org-set-tags-command)
+        (", t"     . org-todo)
+        (", T"     . org-set-tags-command)
         (", W"     . amnn/consult-org-working))
 
   (:map evil-motion-state-map
@@ -793,10 +793,11 @@
 
   :bind
   (:map evil-normal-state-map
-        ("SPC T" . amnn/agenda))
-  ;; Overrides super-agenda's binding to goto-date
+        ("SPC t" . amnn/agenda))
+  ;; Overrides conflicting super-agenda bindings
   (:map org-super-agenda-header-map
-        ("j" . org-agenda-next-line))
+        ("j" . org-agenda-next-line)
+        ("k" . org-agenda-previous-line))
 
   :custom
   (org-agenda-show-future-repeats 'next)
