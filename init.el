@@ -932,10 +932,15 @@
 
 (use-package move-mode
   :ensure t
-  :hook   (move-mode . eglot-ensure)
+  :hook   (move-mode . amnn/eglot-ensure-move)
 
   :config
   (add-to-list 'eglot-server-programs '(move-mode "move-analyzer"))
+
+  (defun amnn/eglot-ensure-move ()
+    "Only turn on eglot for Move files if we are in a project."
+    (when (locate-dominating-file (buffer-file-name) "Move.toml")
+      (eglot-ensure)))
 
   (defun amnn/move-lsp-project-root (dir)
     (and-let* (((boundp 'eglot-lsp-context))
