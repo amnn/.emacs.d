@@ -889,6 +889,11 @@
      available contextually."
     (eglot-inlay-hints-mode -1))
 
+  (defun amnn/disable-flymake ()
+    "Disable flymake suggestions from eglot (if they are getting very noisy)."
+    (remove-hook 'flymake-diagnostic-functions 'eglot-flymake-backend))
+
+  ;; (add-hook 'eglot-managed-mode-hook #'amnn/disable-flymake)
   (add-hook 'eglot-managed-mode-hook #'amnn/eglot-prefer-flymake-eldoc)
   (add-hook 'eglot-managed-mode-hook #'amnn/disable-inlay-hints))
 
