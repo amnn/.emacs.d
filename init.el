@@ -1211,6 +1211,7 @@
   (auto-save-visited-interval 2)
   (auto-save-visited-predicate
    (lambda () (derived-mode-p 'org-mode)))
+
   ;; Store backups centrally, not next to file.
   (backup-directory-alist '(("" . "~/.emacs.d/backup")))
   (indent-tabs-mode nil)
@@ -1218,6 +1219,9 @@
   (require-final-newline t)
   (scroll-margin 5)
   (warning-suppress-log-types '((comp)))
+
+  ;; Text editing
+  (sentence-end-double-space nil)
 
   :config
   (auto-save-visited-mode))
