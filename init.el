@@ -1133,7 +1133,8 @@
           (border-mode-line-inactive bg-mode-line-inactive))
 
         modus-themes-headings
-        '((0 . (1.62)))))
+        '((0 . (1.62))
+          (1 . (1.20)))))
 
 (use-package theming
   :straight nil :demand t :no-require t
