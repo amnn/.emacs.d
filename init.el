@@ -957,6 +957,12 @@
   (cl-defmethod project-root ((project (head Move.toml)))
     (cdr project)))
 
+(use-package nim-mode
+  :ensure t
+  :config
+  (add-to-list 'eglot-server-programs
+               '(nim-mode "~/.nimble/bin/nimlangserver")))
+
 (use-package rustic
   :ensure t
   ;; Hack to re-override rust-mode's habit of stomping the rustic-mode
