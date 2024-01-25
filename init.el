@@ -1127,6 +1127,8 @@
         modus-themes-bold-constructs   t
         modus-themes-common-palette-overrides
         '((fringe                    unspecified)
+          (bg-mode-line-active       bg-blue-subtle)
+          (fg-mode-line-active       fg-main)
           (border-mode-line-active   bg-mode-line-active)
           (border-mode-line-inactive bg-mode-line-inactive))
 
