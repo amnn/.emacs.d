@@ -1130,7 +1130,10 @@
           (bg-mode-line-active       bg-blue-subtle)
           (fg-mode-line-active       fg-main)
           (border-mode-line-active   bg-mode-line-active)
-          (border-mode-line-inactive bg-mode-line-inactive))
+          (border-mode-line-inactive bg-mode-line-inactive)
+          (bg-tab-bar                bg-blue-subtle)
+          (bg-tab-active             bg-main)
+          (bg-tab-other              bg-blue-subtle))
 
         modus-themes-headings
         '((0 . (1.62))
@@ -1145,7 +1148,7 @@
   (use-dialog-box  nil)
 
   (default-frame-alist
-    '((internal-border-width . 24)
+    '((internal-border-width . 0)
       (right-fringe . 0)))
 
   (bookmark-set-fringe-mark nil)
