@@ -853,6 +853,32 @@
   :config
   (pdf-tools-install))
 
+;;; Large Language Models ================================================= ;;;
+
+(use-package copilot
+  :straight (:host github
+             :repo "copilot-emacs/copilot.el"
+             :files ("dist" "*.el"))
+  :hook (prog-mode . copilot-mode)
+  :bind
+  (:map copilot-completion-map
+        ("C-<tab>" . 'copilot-accept-completion)
+        ("C-TAB"   . 'copilot-accept-completion)
+        ("M-<tab>" . 'copilot-accept-completion-by-line)
+        ("M-TAB"   . 'copilot-accept-completion-by-line)))
+
+(use-package gptel
+  :ensure t
+  :config
+  (setq gptel-default-mode #'org-mode)
+
+  :bind
+  (:map evil-normal-state-map
+        ("SPC c" . gptel-send)
+        ("SPC C" . gptel))
+  (:map evil-visual-state-map
+        ("SPC c" . gptel-send)))
+
 ;;; Language Server ======================================================== ;;;
 
 (use-package eglot
@@ -1230,6 +1256,8 @@
   (mac-option-modifier 'meta)
   (require-final-newline t)
   (scroll-margin 5)
+  ;; You will probably live to regret this, but copilot is very noisy
+  (warning-minimum-level :emergency)
   (warning-suppress-log-types '((comp)))
 
   ;; Text editing
