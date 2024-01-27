@@ -314,7 +314,7 @@
   :custom-face
   (whitespace-line ((t (:inherit error :foreground unspecified :background unspecified)))))
 
-;;; Vim Emulation =========================================================  ;;;
+;;; Vim Emulation ========================================================== ;;;
 
 (use-package evil
   :ensure t
@@ -915,7 +915,7 @@
   :config
   (pdf-tools-install))
 
-;;; Large Language Models ================================================= ;;;
+;;; Large Language Models ================================================== ;;;
 
 (use-package copilot
   :straight (:host github
