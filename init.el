@@ -380,7 +380,69 @@
 
 (use-package evil-paredit
   :ensure t
-  :hook (paredit-mode . evil-paredit-mode))
+  :hook (paredit-mode . evil-paredit-mode)
+
+  :preface
+  (defmacro amnn/defun-evil-paredit-motion (fn)
+    `(defun ,(intern (concat "amnn/evil-" (symbol-name fn))) (&optional n)
+       (interactive "p")
+       (let ((evil-cursor-move-beyond-eol t))
+         (forward-char)
+         (,fn n))))
+
+  (amnn/defun-evil-paredit-motion paredit-convolute-sexp)
+  (amnn/defun-evil-paredit-motion paredit-forward)
+  (amnn/defun-evil-paredit-motion paredit-forward-up)
+  (amnn/defun-evil-paredit-motion paredit-forward-down)
+
+  (defun amnn/transpose-sexps-forward ()
+    "Move sexp at point forward relative to its siblings, leaving the
+     point at the beginning of the sexp."
+    (interactive)
+    (let ((evil-move-beyond-eol t))
+      (forward-sexp)
+      (transpose-sexps 1)
+      (backward-sexp)))
+
+  (defun amnn/transpose-sexps-backward ()
+    "Move sexp at point backward relative to its siblings, leaving the
+     point at the beginning of the sexp."
+    (interactive)
+    (let ((evil-move-beyond-eol t))
+      (forward-sexp)
+      (transpose-sexps -1)
+      (backward-sexp)))
+
+  :bind
+  (:map evil-normal-state-map
+        ("; ?"   . amnn/evil-paredit-convolute-sexp)
+
+        ("; <"   . paredit-wrap-angled)
+        ("; >"   . paredit-close-angled-and-newline)
+        ("; {"   . paredit-wrap-curly)
+        ("; }"   . paredit-close-curly-and-newline)
+        ("; ("   . paredit-wrap-round)
+        ("; )"   . paredit-close-round-and-newline)
+        ("; ["   . paredit-wrap-square)
+        ("; ]"   . paredit-close-square-and-newline)
+
+        ("; f"   . amnn/evil-paredit-forward)
+        ("; b"   . paredit-backward)
+        ("; u"   . paredit-backward-up)
+        ("; U"   . amnn/evil-paredit-forward-up)
+        ("; d"   . amnn/evil-paredit-forward-down)
+        ("; D"   . paredit-backward-down)
+
+        ("; h b" . paredit-backward-barf-sexp)
+        ("; h s" . paredit-backward-slurp-sexp)
+        ("; l b" . paredit-forward-barf-sexp)
+        ("; l s" . paredit-forward-slurp-sexp)
+        ("; J"   . paredit-join-sexps)
+        ("; r"   . paredit-raise-sexp)
+        ("; s"   . paredit-splice-sexp)
+        ("; S"   . paredit-split-sexp)
+        ("; t"   . amnn/transpose-sexps-forward)
+        ("; T"   . amnn/transpose-sexps-backward)))
 
 (use-package evil-surround
   :ensure t
