@@ -1245,7 +1245,9 @@
   (window-divider-default-places 'right-only)
 
   :preface
-  (set-frame-font "Iosevka SS15 16")
+  ;; Strangely, Extralight is heavier than Light
+  (set-frame-font "Iosevka SS15-16:weight=light")
+  (set-face-attribute 'bold nil :weight 'regular)
 
   (menu-bar-mode       +1)
   (scroll-bar-mode     -1)
