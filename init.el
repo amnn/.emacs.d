@@ -1219,9 +1219,9 @@
           (fg-mode-line-active       fg-main)
           (border-mode-line-active   bg-mode-line-active)
           (border-mode-line-inactive bg-mode-line-inactive)
-          (bg-tab-bar                bg-blue-subtle)
+          (bg-tab-bar                bg-dim)
           (bg-tab-active             bg-main)
-          (bg-tab-other              bg-blue-subtle))
+          (bg-tab-other              bg-dim))
 
         modus-themes-headings
         '((0 . (1.62))
