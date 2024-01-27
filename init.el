@@ -1247,7 +1247,6 @@
   :preface
   ;; Strangely, Extralight is heavier than Light
   (set-frame-font "Iosevka SS15-16:weight=light")
-  (set-face-attribute 'bold nil :weight 'regular)
 
   (menu-bar-mode       +1)
   (scroll-bar-mode     -1)
@@ -1279,6 +1278,7 @@
 
     (let ((background (face-attribute 'default :background)))
       (custom-set-faces
+       `(bold                       ((t :weight      regular)))
        `(git-gutter-fr:added        ((t :background ,background
                                         :foreground "lime green")))
        `(git-gutter-fr:modified     ((t :background ,background
