@@ -1121,6 +1121,9 @@
   (("C-x g"   . magit-status)
    ("C-x C-g" . magit-status)))
 
+(use-package magit-tbdiff
+  :ensure t)
+
 (use-package git-link
   :straight (:host github :repo "sshaw/git-link" :tag "v0.8.6")
   :bind
