@@ -295,6 +295,13 @@
 
 (use-package project
   :config
+  ;; The `magit-extra' library does this but it doesn't get loaded
+  ;; reliably before `project', so just do this when you load the
+  ;; latter, because the function in question is an autoload in
+  ;; `magit-extra'.
+  (keymap-set project-prefix-map "m" #'magit-project-status)
+  (add-to-list 'project-switch-commands '(magit-project-status "Magit"))
+
   (defun amnn/try-project-root (dir)
     (and-let* ((override (locate-dominating-file dir ".project")))
       (cons '.project override)))
