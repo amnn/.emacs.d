@@ -10,6 +10,7 @@ history
 projects
 recentf
 recentf~
+request/*
 server/*
 straight/*
 transient/*
