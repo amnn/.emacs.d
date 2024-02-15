@@ -540,6 +540,10 @@
   (org-link-set-parameters "sui" :follow #'amnn/open-sui-pr)
   (add-to-list 'org-export-backends 'md)
 
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((shell . t)))
+
   :bind
   (:map evil-normal-state-map
         ("SPC N e" . org-narrow-to-element)
