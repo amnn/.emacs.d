@@ -552,6 +552,10 @@
    '((shell . t)))
 
   :bind
+  (:map org-mode-map
+        ("M-RET" . amnn/org-insert-before)
+        ("C-RET" . amnn/org-insert-after))
+
   (:map evil-normal-state-map
         ("SPC N e" . org-narrow-to-element)
         ("SPC n $" . org-archive-subtree)
