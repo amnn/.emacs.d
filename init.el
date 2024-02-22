@@ -335,6 +335,7 @@
   :bind
   ;; Leader bindings
   (:map evil-normal-state-map
+   ("J"       . 'amnn/evil-join)
    ("SPC b"   . 'consult-buffer)
    ("SPC B"   . 'ibuffer)
    ("SPC d"   . 'dired)
@@ -354,7 +355,16 @@
   :config
   (evil-mode t)
   ;; Unbind to not conflict with Embark
-  (unbind-key "C-." evil-normal-state-map))
+  (unbind-key "C-." evil-normal-state-map)
+
+  (evil-define-operator amnn/evil-join (beg end)
+    "Join the selected lines, strip comment characters in-between, if present."
+    :motion evil-line
+    (evil-join beg end)
+    (save-excursion
+      (forward-char)
+      (when (looking-at comment-start-skip)
+        (replace-match "")))))
 
 (use-package evil-collection
   :ensure t
