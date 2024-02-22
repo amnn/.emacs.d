@@ -925,7 +925,11 @@
                    (:anything t :name nil)))))
 
        (tags-todo "-SCHEDULED={.+}-DEADLINE<=\"<+7d>\"/NEXT"
-                  ((org-agenda-overriding-header "Next")))))))
+                  ((org-agenda-overriding-header "Next")
+                   (org-agenda-sorting-strategy
+                    '(priority-down category-up))
+                   (org-agenda-sorting-strategy-selected
+                    '(priority-down category-up))))))))
 
   (org-agenda-hide-tags-regexp
    "[+-]agenda")
