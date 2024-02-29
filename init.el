@@ -599,7 +599,7 @@
   (org-auto-align-tags nil)
   (org-cycle-separator-lines 1)
   (org-latex-create-formula-image-program 'dvisvgm)
-  (org-log-into-drawer nil)
+  (org-log-into-drawer t) ;; for habit tracking (state changes go into log)
   (org-outline-path-complete-in-steps nil)
   (org-refile-targets
    '((org-agenda-files . (:maxlevel . 3))))
