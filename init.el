@@ -75,12 +75,13 @@
 
   (ace-window-posframe-mode))
 
-(use-package posframe :ensure t)
-
 (use-package breadcrumb
   :straight (:host github :repo "joaotavora/breadcrumb")
   :init
   (breadcrumb-mode))
+
+;; Used by `ace-window' to display the window selection.
+(use-package posframe :ensure t)
 
 ;;; Minibuffer and Completion Frameworks =================================== ;;;
 
@@ -938,6 +939,9 @@
   (defun amnn/agenda ()
     (interactive)
     (org-agenda nil "x")))
+
+(use-package ox-clip
+  :ensure t)
 
 (use-package pdf-tools
   :ensure t
