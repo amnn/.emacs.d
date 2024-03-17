@@ -954,7 +954,10 @@
   :straight (:host github
              :repo "copilot-emacs/copilot.el"
              :files ("dist" "*.el"))
-  :hook (prog-mode . copilot-mode)
+  :hook
+  ((prog-mode . copilot-mode)
+   (org-mode  . copilot-mode))
+
   :bind
   (:map copilot-completion-map
         ("C-<tab>" . 'copilot-accept-completion)
