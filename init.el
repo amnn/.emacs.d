@@ -1367,4 +1367,5 @@
   (sentence-end-double-space nil)
 
   :config
-  (auto-save-visited-mode))
+  (auto-save-visited-mode)
+  (add-to-list 'recentf-exclude "Roam/.*\\.org"))
