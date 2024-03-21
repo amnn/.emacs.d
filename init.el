@@ -11,7 +11,7 @@
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el"
-			 user-emacs-directory))
+                         user-emacs-directory))
       (bootstrap-version 6))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
@@ -123,7 +123,7 @@
   :bind
   (:map evil-normal-state-map
         ("ge" . 'consult-flymake)
-	("gs" . 'consult-eglot-symbols)))
+        ("gs" . 'consult-eglot-symbols)))
 
 (use-package consult-org
   :straight nil
@@ -138,11 +138,11 @@
   (corfu-preselect-first nil)
   :bind
   (:map corfu-map
-	("M-SPC"   . corfu-insert-separator)
-	("TAB"     . corfu-next)
-	([tab]     . corfu-next)
-	("S-TAB"   . corfu-previous)
-	([backtab] . corfu-previous))
+        ("M-SPC"   . corfu-insert-separator)
+        ("TAB"     . corfu-next)
+        ([tab]     . corfu-next)
+        ("S-TAB"   . corfu-previous)
+        ([backtab] . corfu-previous))
   :init
   (global-corfu-mode))
 
@@ -165,22 +165,22 @@
 
   :custom
   (embark-indicators '(embark-highlight-indicator
-		       embark-isearch-highlight-indicator
-		       embark-minimal-indicator))
+                       embark-isearch-highlight-indicator
+                       embark-minimal-indicator))
   (prefix-help-command #'embark-prefix-help-command)
   (enable-recursive-minibuffers t)
 
   :init
   ;; Hide the mode line of the Embark live/completion buffers
   (add-to-list 'display-buffer-alist
-	       '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*" nil
-		 (window-parameters (mode-line-format . none))))
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*" nil
+                 (window-parameters (mode-line-format . none))))
 
   (eval-when-compile
     (defmacro amnn/embark-ace-action (fn)
       `(defun ,(intern (concat "amnn/embark-ace-" (symbol-name fn))) ()
-	 (interactive)
-	 (with-demoted-errors "%s"
+         (interactive)
+         (with-demoted-errors "%s"
            (require 'ace-window)
            (let ((aw-dispatch-always t))
              (aw-switch-to-window (aw-select nil))
@@ -230,10 +230,10 @@
 
   (defun amnn/orderless--suffix-regexp ()
     (if (and (boundp 'consult--tofu-char)
-	     (boundp 'consult--tofu-range))
-	(format "[%c-%c]*$" consult--tofu-char
-		(+ consult--tofu-char
-		   consult--tofu-range -1))
+             (boundp 'consult--tofu-range))
+        (format "[%c-%c]*$" consult--tofu-char
+                (+ consult--tofu-char
+                   consult--tofu-range -1))
         "$"))
 
   (orderless-define-completion-style amnn/orderless-with-initialism
@@ -245,14 +245,14 @@
      ;; Ensure that $ works with Consult commands' disambiguation suffixes
      ((string-suffix-p "$" word)
       `(orderless-regexp  . ,(concat (substring word 0 -1)
-				     (amnn/orderless--suffix-regexp))))
+                                     (amnn/orderless--suffix-regexp))))
 
      ;; File extensions
      ((and (or minibuffer-completing-file-name
-	       (derived-mode-p 'eshell-mode))
-	   (string-match-p "\\`\\.." word))
+               (derived-mode-p 'eshell-mode))
+           (string-match-p "\\`\\.." word))
       `(orderless-regexp . ,(concat "\\." (substring word 1)
-				    (amnn/orderless--suffix-regexp))))
+                                    (amnn/orderless--suffix-regexp))))
 
      ;; Ignore single !
      ((equal "!" word)
@@ -260,13 +260,13 @@
 
      ;; Prefixes
      ((when-let (x (assq (aref word 0)
-			 amnn/orderless-dispatch-alist))
-	(cons (cdr x) (substring word 1))))
+                         amnn/orderless-dispatch-alist))
+        (cons (cdr x) (substring word 1))))
 
      ;; Suffixes
      ((when-let (x (assq (aref word (1- (length word)))
-			 amnn/orderless-dispatch-alist))
-	(cons (cdr x)(substring word 0 -1)))))))
+                         amnn/orderless-dispatch-alist))
+        (cons (cdr x)(substring word 0 -1)))))))
 
 (use-package savehist
   :ensure t
@@ -992,15 +992,15 @@
         ("SPC q" . eglot-code-action-quickfix)
         ("SPC r" . eglot-rename)
         ("gE" . flymake-show-project-diagnostics)
-	("gi" . eglot-find-implementation)
-	("gd" . xref-find-definitions)
-	("gD" . eglot-find-declaration)
-	("gr" . xref-find-references)
-	("gy" . eglot-find-typeDefinition))
+        ("gi" . eglot-find-implementation)
+        ("gd" . xref-find-definitions)
+        ("gD" . eglot-find-declaration)
+        ("gr" . xref-find-references)
+        ("gy" . eglot-find-typeDefinition))
 
   (:map evil-motion-state-map
-	("[g" . flymake-goto-prev-error)
-	("]g" . flymake-goto-next-error))
+        ("[g" . flymake-goto-prev-error)
+        ("]g" . flymake-goto-next-error))
 
   :init
   (defun amnn/eglot-prefer-flymake-eldoc ()
@@ -1305,7 +1305,7 @@
      Emacs. LIGHT-OR-DARK is a string literal, either `light' or
      `dark'."
     (call-process "/Applications/kitty.app/Contents/MacOS/kitty" nil nil nil
-		  "@" "--to" "unix:/tmp/kitty-pipe"
+                  "@" "--to" "unix:/tmp/kitty-pipe"
                   "set-colors" "--all" "--configured"
                   (concat "~/.config/kitty/ayu-" (symbol-name light-or-dark) ".conf")))
 
