@@ -1244,6 +1244,8 @@
   :commands (sml/setup)
   :custom
   (sml/no-confirm-load-theme t)
+  (sml/shorten-modes nil)
+  (sml/mode-width 0)
   (sml/theme 'respectful))
 
 (use-package modus-themes
