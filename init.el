@@ -1367,7 +1367,7 @@
 
 (use-package emacs
   :hook
-  (before-save . delete-trailing-whitespace)
+  (before-save . amnn/delete-trailing-whitespace)
 
   :custom
   ;; Auto-save org mode files in-place
@@ -1390,4 +1390,9 @@
 
   :config
   (auto-save-visited-mode)
-  (add-to-list 'recentf-exclude "Roam/.*\\.org"))
+  (add-to-list 'recentf-exclude "Roam/.*\\.org")
+
+  (defun amnn/delete-trailing-whitespace ()
+    (interactive)
+    (delete-trailing-whitespace 0 (line-beginning-position))
+    (delete-trailing-whitespace (line-end-position))))
