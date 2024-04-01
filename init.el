@@ -553,6 +553,14 @@
     (interactive)
     (consult-org-heading "/WORK" (org-agenda-files)))
 
+  (defun org-babel-execute:janet (body params)
+    "Execute a block of Janet code with org-babel."
+    (let* ((tmp-file (org-babel-temp-file "babel" ".janet"))
+           (cmd (format "janet %s" tmp-file)))
+      (with-temp-file tmp-file
+        (insert body))
+      (org-babel-eval cmd "")))
+
   :config
   (org-link-set-parameters "slack" :follow #'amnn/open-slack)
   (org-link-set-parameters "sui" :follow #'amnn/open-sui-pr)
