@@ -1134,6 +1134,18 @@
   (cl-defmethod project-root ((project (head tsconfig.json)))
     (cdr project)))
 
+(use-package uiua-ts-mode
+  :mode "\\.ua\\'"
+  :ensure t
+
+  :config
+
+  (defun amnn/uiua-font ()
+    (setq buffer-face-mode-face '(:family "Uiua386"))
+    (buffer-face-mode))
+
+  (add-hook 'uiua-ts-mode-hook #'amnn/uiua-font))
+
 (use-package wgsl-mode
   :ensure t)
 
