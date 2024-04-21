@@ -1369,6 +1369,36 @@
   :config
   (exec-path-from-shell-initialize))
 
+(use-package ffap
+  :config
+  ;; Regular expression to match strings that might be paths.
+  (defvar amnn/re-fuzzy-path "\\`[a-zA-Z0-9-_.]+\\(/[a-zA-Z0-9-_.]+\\)*\\'")
+
+  ;; Even if the original file-at-point implementation believes a file
+  ;; does not exist, let it through anyway, because it might be a
+  ;; fuzzy file, and the completion framework will pick it out for us.
+  (advice-add
+   'ffap-file-at-point :after-until
+   (lambda ()
+     (let ((name (ffap-string-at-point)))
+       (when (string-match ":[0-9]" name)
+         (setq name (substring name 0 (match-beginning 0))))
+       (when (string-match amnn/re-fuzzy-path name)
+         name))))
+
+  ;; We also need to override find-file-at-point to account for fuzzy
+  ;; files, so that it uses the prompt to clarify which file, even
+  ;; when it has been supplied an explicit file, in case that file
+  ;; does not exist.
+  (advice-add
+   'find-file-at-point :filter-args
+   (lambda (args)
+     (if (not args) args
+       (let ((filename (car args)))
+         (cond ((not (string-match amnn/re-fuzzy-path filename)) args)
+               ((file-exists-p filename) args)
+               (t (list (ffap-prompter filename)))))))))
+
 (use-package emacs
   :hook
   (before-save . amnn/delete-trailing-whitespace)
