@@ -927,6 +927,10 @@
                 (org-habit-show-all-today t)
                 (org-habit-show-habits-only-for-today t)
 
+                (org-agenda-sorting-strategy
+                 '(habit-up time-up priority-down
+                   deadline-up scheduled-up category-up))
+
                 (org-super-agenda-groups
                  '((:discard (:and (:scheduled future
                                     :habit t)))
