@@ -1317,7 +1317,7 @@
 
   :preface
   ;; Strangely, Extralight is heavier than Light
-  (set-frame-font "Iosevka SS15-16:weight=light")
+  (set-frame-font "Iosevka SS15-14:weight=light")
 
   (menu-bar-mode       +1)
   (scroll-bar-mode     -1)
