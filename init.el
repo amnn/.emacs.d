@@ -1045,6 +1045,12 @@
 
 (use-package clojure-mode :ensure t)
 
+(use-package cider
+  :ensure t
+  :bind
+  (:map evil-normal-state-map
+        ("gI" . cider-inspect)))
+
 (use-package fish-mode :ensure t)
 
 (use-package graphql-mode
