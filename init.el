@@ -1124,15 +1124,27 @@
 (use-package ron-mode
   :ensure t)
 
-(use-package typescript-mode
-  :ensure t
-  :hook   (typescript-mode . eglot-ensure)
+(use-package typescript-ts-mode
+  :hook ((typescript-ts-mode tsx-ts-mode) . eglot-ensure)
+  :mode (("\\.ts\\'"  . typescript-ts-mode)
+         ("\\.tsx\\'" . tsx-ts-mode))
   :custom
   (typescript-indent-level 2)
 
   :config
+  (defun amnn/infer-indentation ()
+    (let ((spcs (how-many "^ "  (point-min) (point-max)))
+          (tabs (how-many "^\t" (point-min) (point-max))))
+      (setq indent-tabs-mode (> tabs spcs))))
+
+  (add-hook 'typescript-ts-mode-hook #'amnn/infer-indentation)
+  (add-hook 'tsx-ts-mode-hook #'amnn/infer-indentation)
+
+  (put 'tsx-ts-mode 'eglot-language-id "typescriptreact")
+
   (add-to-list 'eglot-server-programs
-               '(typescript-mode "typescript-language-server" "--stdio"))
+               '(typescript-ts-mode "typescript-language-server" "--stdio")
+               '(tsx-ts-mode "typescript-language-server" "--stdio"))
 
   (defun amnn/ts-lsp-project-root (dir)
     (and-let* (((boundp 'eglot-lsp-context))
@@ -1315,6 +1327,8 @@
   (window-divider-default-right-width 24)
   (window-divider-default-places 'right-only)
 
+  (treesit-font-lock-level 4)
+
   :preface
   ;; Strangely, Extralight is heavier than Light
   (set-frame-font "Iosevka SS15-14:weight=light")
@@ -1421,6 +1435,8 @@
   (mac-option-modifier 'meta)
   (require-final-newline t)
   (scroll-margin 5)
+  (tab-width 2)
+
   ;; You will probably live to regret this, but copilot is very noisy
   (warning-minimum-level :emergency)
   (warning-suppress-log-types '((comp)))
