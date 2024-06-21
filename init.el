@@ -1428,6 +1428,9 @@
   ;; Text editing
   (sentence-end-double-space nil)
 
+  ;; Save more recent files history
+  (recentf-max-saved-items 1000)
+
   :config
   (auto-save-visited-mode)
   (add-to-list 'recentf-exclude "Roam/.*\\.org")
